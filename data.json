@@ -1,0 +1,53 @@
+{
+  "updatedAt": "2024-03-24 15:00",
+  "articles": [
+    {
+      "title": "깃허브로 나만의 뉴스 사이트 만들기, 어렵지 않아요",
+      "source": "Tech Guide",
+      "time": "방금 전",
+      "summary": "서버 비용 없이 깃허브 페이지(GitHub Pages)를 활용하면 누구나 평생 무료로 웹사이트를 운영할 수 있습니다. HTML 파일 하나와 데이터 파일 하나면 충분합니다.",
+      "link": "https://github.com",
+      "image": "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "title": "AI 자동화, 이제는 선택이 아닌 필수",
+      "source": "Future Times",
+      "time": "1시간 전",
+      "summary": "1인 미디어 시대, AI를 활용한 콘텐츠 큐레이션이 주목받고 있습니다. 파이썬 스크립트로 뉴스를 수집하고 ChatGPT로 요약하는 자동화 파이프라인 구축 방법을 소개합니다.",
+      "link": "#",
+      "image": "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "title": "주말 날씨: 전국 맑고 포근... 나들이객 북적",
+      "source": "Weather K",
+      "time": "2시간 전",
+      "summary": "이번 주말은 이동성 고기압의 영향으로 전국이 대체로 맑겠으며, 낮 기온이 20도 안팎까지 올라 봄기운을 만끽하기 좋겠습니다.",
+      "link": "#",
+      "image": "https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "title": "손흥민, 시즌 15호골 폭발... 팀 승리 견인",
+      "source": "Sports Daily",
+      "time": "3시간 전",
+      "summary": "토트넘의 캡틴 손흥민이 중요한 경기에서 결정적인 득점포를 가동하며 팀을 승리로 이끌었습니다. 현지 언론의 찬사가 쏟아지고 있습니다.",
+      "link": "#",
+      "image": "https://images.unsplash.com/photo-1522770179533-24471fcdba45?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "title": "애플, 차세대 아이폰에 생성형 AI 탑재 예고",
+      "source": "IT News",
+      "time": "5시간 전",
+      "summary": "애플이 차기 iOS 업데이트를 통해 온디바이스 AI 기능을 대폭 강화할 예정입니다. 시리(Siri)의 진화가 사용자 경험을 어떻게 바꿀지 기대됩니다.",
+      "link": "#",
+      "image": "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "title": "직장인 부업 트렌드, '콘텐츠 크리에이터' 급부상",
+      "source": "Job Trend",
+      "time": "6시간 전",
+      "summary": "퇴근 후 블로그나 유튜브를 운영하며 추가 수익을 창출하는 직장인들이 늘고 있습니다. 꾸준함이 성공의 열쇠입니다.",
+      "link": "#",
+      "image": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80"
+    }
+  ]
+}
