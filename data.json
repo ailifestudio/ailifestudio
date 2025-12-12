@@ -1,31 +1,22 @@
 {
-  "updatedAt": "2025-12-12 15:59",
+  "updatedAt": "2025-12-12 16:14",
   "articles": [
     {
-      "title": "AI로 반복 업무는 이제 그만! 업무 생산성 2배 높이는 실전 자동화 팁",
-      "source": "AI/테크",
-      "time": "방금 전",
-      "summary": "안녕하세요! 여러분의 스마트한 AI 라이프를 응원하는 친근한 AI/테크 블로거, 에디입니다! 👋\n\n매일 똑같은 업무에 시간 낭비하고 계신가요? 😥 지루한 반복 작업에 지쳐 퇴근 시간만 기다리셨던 경험, 있으시죠? 매번 수기로 처리하던 일을 AI가 대신 해준다면 어떨까요? ✨ 상상만 해도 너무 행복하지 않나요?\n\n놀랍게도, 이제 그 상상이 현실이 됩니다! 오...",
-      "link": "#",
-      "image": "https://source.unsplash.com/800x600/?ChatGPT%20interface%20on%20a%20laptop%20screen%20with%20an%20email%20draft",
-      "content": "안녕하세요! 여러분의 스마트한 AI 라이프를 응원하는 친근한 AI/테크 블로거, 에디입니다! 👋\n\n매일 똑같은 업무에 시간 낭비하고 계신가요? 😥 지루한 반복 작업에 지쳐 퇴근 시간만 기다리셨던 경험, 있으시죠? 매번 수기로 처리하던 일을 <strong>AI가 대신 해준다면</strong> 어떨까요? ✨ 상상만 해도 너무 행복하지 않나요?\n\n놀랍게도, 이제 그 상상이 현실이 됩니다! 오늘은 제가 여러분의 든든한 AI 비서가 되어드릴 수 있는 🚀 <strong>실전 자동화 꿀팁</strong>들을 아낌없이 방출해 드릴게요. 이 글을 읽고 나면, 오늘부터 여러분의 업무 생산성은 2배, 아니 3배 이상 폭발적으로 늘어날 거예요! 💪\n\n자, 그럼 AI와 함께 칼퇴를 향해 떠나볼까요? 💨\n\n---\n\n<h2>AI 비서와 함께라면 칼퇴 가능! 🤖 반복 업무 싹 다 자동화하고 생산성 2배 높이는 실전 꿀팁!</h2>\n\n매일매일 챗GPT나 다른 AI 도구를 켜놓고 활용하는 것이 일상인 분들이 많으실 거예요. 하지만 단순히 '정보 검색'이나 '질문 답변' 수준을 넘어, 좀 더 깊이 있게 AI를 활용해서 <strong>반복적인 업무를 통째로 자동화</strong>하고 싶다면 오늘 글에 집중해 주세요! 제가 직접 써보고 효과를 본 방법들만 모아왔답니다. 😊\n\n---\n\n\n<div class=\"my-6 rounded-xl overflow-hidden shadow-lg\">\n    <img src=\"https://source.unsplash.com/800x600/?ChatGPT%20interface%20on%20a%20laptop%20screen%20with%20an%20email%20draft\" alt=\"ChatGPT interface on a laptop screen with an email draft\" class=\"w-full h-auto object-cover\" loading=\"lazy\">\n    <p class=\"text-xs text-gray-400 text-center py-2 bg-gray-50\">📷 Photo by <a href=\"https://unsplash.com\" target=\"_blank\" class=\"underline\">Unsplash</a></p>\n</div>\n\n<h3>1. 📧 이메일 & 문서 초안 작성은 AI에게 맡기세요!</h3>\n\n매일 아침 책상에 앉아 \"오늘은 또 어떤 메일을 써야 하나...\" 고민하시나요? 고객 문의 답변, 팀원 공지, 보고서 초안 등, 생각보다 많은 시간을 단순 텍스트 작성에 쏟고 계실 겁니다. 이제 이 반복적인 작업을 AI에게 넘겨줄 때입니다! 🤩\n\nAI는 특정 지시만 내리면 <strong>정확하고 매끄러운 문장</strong>을 순식간에 만들어냅니다. 여러분은 그저 AI가 쓴 초안을 검토하고 살짝 다듬기만 하면 돼요. 🎯\n\n*   <strong>활용 예시:</strong>\n    *   <strong>고객 문의 답변:</strong> \"안녕하세요, [고객명]님. 문의하신 [제품/서비스] 관련하여 답변드립니다.\" 와 같은 정형화된 틀에 내용을 채워 넣는 작업.\n    *   <strong>회의록 요약 및 공유 메일:</strong> 회의 내용을 바탕으로 주요 결정사항과 다음 액션 플랜을 정리한 메일.\n    *   <strong>주간 보고서 초안:</strong> 특정 데이터를 기반으로 한 간단한 요약 보고서.\n\n**💡 실전 꿀팁:** AI에게 더 좋은 결과물을 얻고 싶다면, <strong>구체적인 프롬프트</strong>를 제공하는 것이 핵심입니다. 단순히 \"메일 써줘\"가 아니라, \"다음 내용을 포함해서 [상황]에 맞는 [목표]를 위한 [톤앤매너]의 메일을 작성해 줘.\" 처럼 자세히 알려주세요.\n\n<p style=\"border-left:4px solid #3b82f6; padding-left:10px; background:#f0f9ff; padding:10px;\">\n<strong>💡 꿀팁:</strong> 이메일 작성 시 자주 사용하는 템플릿을 AI에게 미리 학습시켜두면 더욱 편리해요. 예를 들어, \"고객 감사 메일 템플릿\"을 만들어 놓고, 내용만 바꿔서 활용하는 거죠.\n</p>\n\n```\n# 이메일 초안 작성 프롬프트 예시\n\"다음 내용을 포함하여 [제품명]의 새로운 기능 출시를 알리는 고객 이메일을 작성해 주세요.\n- 대상: 기존 고객\n- 목적: 신규 기능 [기능명] 소개 및 사용 독려\n- 주요 내용: [기능 설명 1], [기능 설명 2]\n- 행동 유도: [링크]를 통해 지금 바로 경험해보세요!\n- 톤앤매너: 친근하고 전문적인 어조\"\n```\n\n---\n\n\n<div class=\"my-6 rounded-xl overflow-hidden shadow-lg\">\n    <img src=\"https://source.unsplash.com/800x600/?Person%20interacting%20with%20an%20AI%20data%20analysis%20tool%2C%20showing%20charts%20and%20graphs\" alt=\"Person interacting with an AI data analysis tool, showing charts and graphs\" class=\"w-full h-auto object-cover\" loading=\"lazy\">\n    <p class=\"text-xs text-gray-400 text-center py-2 bg-gray-50\">📷 Photo by <a href=\"https://unsplash.com\" target=\"_blank\" class=\"underline\">Unsplash</a></p>\n</div>\n\n<h3>2. 📊 지긋지긋한 데이터 정리 & 분석, 이제 AI가 해줍니다!</h3>\n\n엑셀 파일 속에 파묻혀 수많은 숫자와 씨름하고 계신가요? 😵‍💫 데이터 정렬, 필터링, 간단한 통계 계산... 이 모든 작업이 시간이 생각보다 많이 걸립니다. 하지만 이제 AI가 여러분의 데이터 분석 비서가 되어줄 수 있어요! 특히 챗GPT의 <strong>Advanced Data Analysis 기능</strong>(유료 버전)은 정말 놀랍습니다.\n\n*   <strong>활용 예시:</strong>\n    *   <strong>CSV, 엑셀 파일 요약:</strong> AI에게 파일을 업로드하고, \"이 데이터에서 가장 높은 매출을 기록한 제품 5가지와 그 이유를 분석해 줘\"라고 요청해 보세요.\n    *   <strong>특정 패턴 발견:</strong> \"이 고객 리뷰 데이터에서 가장 자주 언급되는 키워드 5가지와 긍정/부정 의견을 요약해 줘.\"\n    *   <strong>보고서용 그래프 아이디어:</strong> \"이 데이터로 어떤 인사이트를 뽑아낼 수 있는지 제안하고, 시각화를 위한 그래프 종류도 추천해 줘.\"\n\n**💡 실전 꿀팁:** AI는 여러분이 생각지도 못한 방식으로 데이터의 숨겨진 의미를 찾아내기도 합니다. <strong>가설을 던져주고 검증을 요청</strong>하거나, <strong>다양한 관점으로 분석</strong>해 달라고 요구해 보세요. 🕵️‍♀️\n\n<p style=\"border-left:4px solid #3b82f6; padding-left:10px; background:#f0f9ff; padding:10px;\">\n<strong>💡 꿀팁:</strong> 민감한 개인 정보가 포함된 데이터는 직접 업로드하기 전에 반드시 <strong>익명화 처리</strong>를 하거나, <strong>예시 데이터로 대체</strong>하여 AI에 입력하는 것이 안전합니다. 보안은 언제나 최우선! 🔒\n</p>\n\n---\n\n\n<div class=\"my-6 rounded-xl overflow-hidden shadow-lg\">\n    <img src=\"https://source.unsplash.com/800x600/?AI%20writing%20assistant%20generating%20blog%20posts%20on%20a%20tablet\" alt=\"AI writing assistant generating blog posts on a tablet\" class=\"w-full h-auto object-cover\" loading=\"lazy\">\n    <p class=\"text-xs text-gray-400 text-center py-2 bg-gray-50\">📷 Photo by <a href=\"https://unsplash.com\" target=\"_blank\" class=\"underline\">Unsplash</a></p>\n</div>\n\n<h3>3. ✍️ 콘텐츠 아이디어 & 초고 생성, 막막함은 이제 그만!</h3>\n\n블로그 포스팅, SNS 게시물, 뉴스레터, 발표 자료 등 꾸준히 새로운 콘텐츠를 만들어야 하는 분들 많으시죠? 😩 매번 신선한 아이디어를 내고, 글을 쓰는 것은 정말 어려운 일입니다. 이때 AI는 여러분의 든든한 <strong>콘텐츠 크리에이터</strong>가 되어줄 수 있어요.\n\n*   <strong>활용 예시:</strong>\n    *   <strong>블로그 주제 아이디어:</strong> \"[타겟 독자]를 위한 [산업/분야] 관련 블로그 포스팅 주제 10가지 제안해 줘.\"\n    *   <strong>SNS 게시물 초안:</strong> \"[이벤트]를 홍보하는 인스타그램 게시물 작성해 줘. 해시태그 5개 포함.\"\n    *   <strong>스토리보드 구성:</strong> \"[주제]에 대한 유튜브 영상 스토리보드 초안을 작성해 줘.\"\n    *   <strong>초고 작성:</strong> 특정 키워드와 개요를 주면, AI가 글의 뼈대를 잡아주거나 초안을 완성해 줍니다.\n\n**💡 실전 꿀팁:** AI가 생성한 초고는 훌륭한 시작점이 될 수 있지만, <strong>여러분의 개성과 전문 지식을 더하는 것</strong>이 중요합니다. AI가 제공한 정보를 맹신하지 말고 <strong>반드시 사실 확인</strong>을 거친 후, 여러분만의 색깔로 다듬어 주세요. 🎨\n\n```\n# 블로그 포스팅 아이디어 프롬프트 예시\n\"MZ세대를 타겟으로 하는 '재테크' 관련 블로그 포스팅 주제 5가지와 각 주제별 핵심 키워드를 제안해 주세요.\n각 주제는 독자의 흥미를 유발할 수 있도록 구체적인 제목으로 작성해주세요.\"\n```\n\n---\n\n\n<div class=\"my-6 rounded-xl overflow-hidden shadow-lg\">\n    <img src=\"https://source.unsplash.com/800x600/?Calendar%20app%20with%20AI%20features%2C%20showing%20smart%20scheduling%20and%20meeting%20notes\" alt=\"Calendar app with AI features, showing smart scheduling and meeting notes\" class=\"w-full h-auto object-cover\" loading=\"lazy\">\n    <p class=\"text-xs text-gray-400 text-center py-2 bg-gray-50\">📷 Photo by <a href=\"https://unsplash.com\" target=\"_blank\" class=\"underline\">Unsplash</a></p>\n</div>\n\n<h3>4. 🗓️ 회의록 요약부터 일정 조율까지, AI 스마트 어시스턴트!</h3>\n\n잦은 회의는 업무의 중요한 부분이지만, 회의 준비부터 회의록 작성, 공유까지 손이 많이 갑니다. 특히 긴 회의를 마치고 요점을 정리하는 것은 정말 고된 일이죠. AI는 이 과정에서도 여러분의 시간을 아껴줄 수 있어요. ⏰\n\n*   <strong>활용 예시:</strong>\n    *   <strong>회의록 요약:</strong> 녹음된 회의 내용을 텍스트로 변환(STT)한 후 AI에게 입력하여 핵심 결정 사항, 담당자, 다음 액션 아이템을 요약해 달라고 요청할 수 있습니다.\n    *   <strong>이메일에서 일정 제안:</strong> \"팀원들의 스케줄을 고려하여 다음 주 중 가장 적절한 회의 시간 3가지를 제안하고, 참석자들에게 보낼 이메일 초안을 작성해 줘.\"\n    *   <strong>아이디어 브레인스토밍:</strong> 회의 전, 특정 주제에 대해 AI와 함께 아이디어를 발산하고, 이를 바탕으로 회의 안건을 미리 구성할 수 있습니다.\n\n**💡 실전 꿀팁:** 최근에는 AI 기반의 회의록 자동화 도구(예: 뤼튼의 'AI 회의록 요약', Google Meet의 AI 기능 등)들이 많이 등장하고 있어요. 이런 도구들을 활용하면 <strong>회의 내용을 실시간으로 텍스트화</strong>하고, <strong>자동으로 요약까지</strong> 해주니 꼭 한번 찾아보세요! ✨\n\n---\n\n\n<div class=\"my-6 rounded-xl overflow-hidden shadow-lg\">\n    <img src=\"https://source.unsplash.com/800x600/?Workflow%20automation%20diagram%20with%20AI%20components%20connecting%20different%20applications\" alt=\"Workflow automation diagram with AI components connecting different applications\" class=\"w-full h-auto object-cover\" loading=\"lazy\">\n    <p class=\"text-xs text-gray-400 text-center py-2 bg-gray-50\">📷 Photo by <a href=\"https://unsplash.com\" target=\"_blank\" class=\"underline\">Unsplash</a></p>\n</div>\n\n<h3>5. 🔗 AI와 다른 도구를 연결하여 완전 자동화 워크플로우 구축하기!</h3>\n\n단순히 AI 챗봇에 명령을 내리는 것을 넘어, AI를 다양한 업무 자동화 도구(Zapier, Make.com 등)와 연결하면 <strong>진정한 자동화 워크플로우</strong>를 만들 수 있습니다. \"A가 발생하면 B를 하고, C를 할 때 AI에게 D를 요청한 뒤 E로 보낸다\"와 같은 복잡한 연쇄 자동화가 가능해지는 거죠! 🤯\n\n*   <strong>활용 예시:</strong>\n    *   <strong>새로운 메일 -> AI 요약 -> 슬랙 알림:</strong> 특정 메일함에 새 메일이 도착하면, 그 내용을 AI가 요약한 뒤, 팀 슬랙 채널에 요약본과 함께 알림을 보냅니다. (예: \"긴급 고객 문의 메일이 도착했습니다. AI 요약: [요약 내용]\")\n    *   <strong>구글 폼 제출 -> AI 답변 초안 생성 -> 구글 시트 업데이트:</strong> 고객이 구글 폼으로 문의사항을 제출하면, AI가 자동으로 답변 초안을 생성하여 구글 시트에 기록합니다.\n    *   <strong>새로운 블로그 포스팅 -> AI 요약 -> SNS 자동 게시:</strong> 워드프레스에 새 글이 발행되면, AI가 해당 글의 핵심을 요약하고, 요약된 내용과 함께 인스타그램/페이스북에 자동으로 게시물을 올립니다.\n\n**💡 실전 꿀팁:** 처음부터 거창한 워크플로우를 만들려고 하지 마세요! 🙅‍♀️ 여러분의 일상 업무 중 <strong>가장 귀찮고 반복적인 한 가지</strong>를 정하고, 그것부터 AI와 자동화 도구를 연결하여 자동화해보세요. 작은 성공 경험이 다음 단계로 나아가는 큰 원동력이 될 겁니다.\n\n<p style=\"border-left:4px solid #3b82f6; padding-left:10px; background:#f0f9ff; padding:10px;\">\n<strong>💡 꿀팁:</strong> Zapier나 Make.com 같은 서비스는 복잡하게 보일 수 있지만, 템플릿과 튜토리얼이 잘 되어 있습니다. '내가 이걸 할 수 있을까?' 걱정하지 마시고, <strong>무료 플랜으로 가볍게 시작</strong>해보세요! 😉\n</p>\n\n---\n\n<h3>마무리하며: AI는 여러분의 시간을 절약해주는 최고의 파트너!</h3>\n\n어떠셨나요, 여러분? 🤩 AI를 활용한 업무 자동화, 생각보다 훨씬 더 쉽고 강력하죠? 오늘 제가 소개해 드린 팁들은 AI가 단순한 도구를 넘어, 여러분의 <strong>개인 비서이자 스마트한 업무 파트너</strong>가 될 수 있음을 보여줍니다.\n\n반복적이고 지루한 업무는 이제 AI에게 과감히 넘겨주세요! 그리고 여러분은 그 시간에 더 <strong>창의적이고 가치 있는 일</strong>에 집중할 수 있게 될 겁니다. 💡 이는 곧 생산성 향상뿐만 아니라, 업무 만족도와 삶의 질 향상으로 이어질 거예요.\n\n오늘부터 바로 하나씩 시도해 보세요! 작은 변화가 여러분의 업무 방식을 완전히 뒤바꿀 수 있습니다. ✨ 여러분의 스마트한 업무 자동화 여정을 제가 항상 응원할게요! 궁금한 점이 있다면 언제든지 댓글로 남겨주세요. 다음에도 유익한 AI 꿀팁으로 찾아오겠습니다! 안녕! 👋",
+      "title": "Zevo wants to add robotaxis to its car-share fleet, starting with newcomer Tensor",
+      "source": "TechCrunch",
+      "time": "1시간 전",
+      "summary": "As robotaxi adoption continues, wild ideas like personal ownership and renting them out are starting to pop up again....",
+      "link": "https://techcrunch.com/2025/12/12/zevo-wants-to-add-robotaxis-to-its-car-share-fleet-starting-with-newcomer-tensor/",
+      "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80",
       "category": "AI/테크",
-      "type": "ai_generated",
-      "created_at": "2025-12-12 15:59",
-      "image_keywords": [
-        "ChatGPT interface on a laptop screen with an email draft",
-        "Person interacting with an AI data analysis tool, showing charts and graphs",
-        "AI writing assistant generating blog posts on a tablet",
-        "Calendar app with AI features, showing smart scheduling and meeting notes",
-        "Workflow automation diagram with AI components connecting different applications"
-      ]
+      "type": "rss"
     },
     {
-      "title": "[e스포츠人] PGC GF 1일차 3위로 우승 불씨 살린 T1 \"우린 실전에 강한 팀\"",
-      "source": "테크M",
-      "time": "15시간 전",
-      "summary": "글로벌 배틀그라운드 e스포츠 최강자를 가리는 '펍지 글로벌 챔피언십(PGC) 2025' 그랜드 파이널 1일차에서 5개 한국 팀 중 유일하게 상위권인 3위로 경기를 마무리한 T1이 우승에 대한 자신감을 표출했다.12일 태국 방콕 시암 파라곤에서 열린 PGC 2025 그랜드 파이널 1일차 경기 이후 기자들과 만난 신명관 T1 감독은 \"T1은 실전에 강하다\"며 ...",
-      "link": "https://www.techm.kr/news/articleView.html?idxno=147718",
+      "title": "Flaw in photo booth maker’s website exposes customers’ pictures",
+      "source": "TechCrunch",
+      "time": "37분 전",
+      "summary": "Hama Film makes photo booths that upload pictures and videos online. But their backend systems have a simple flaw that allows anyone to download customer pictures....",
+      "link": "https://techcrunch.com/2025/12/12/flaw-in-photo-booth-makers-website-exposes-customers-pictures/",
       "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80",
       "category": "AI/테크",
       "type": "rss"
@@ -41,64 +32,78 @@
       "type": "rss"
     },
     {
-      "title": "[카드뉴스] 배달의민족 '미래 전략' 총정리...외식업 파트너, 라이더까지 모두 품었다",
+      "title": "[e스포츠人] PGC GF 1일차 3위로 우승 불씨 살린 T1 \"우린 실전에 강한 팀\"",
       "source": "테크M",
-      "time": "17시간 전",
-      "summary": "배달의민족(배민)을 운영하는 우아한형제들이 최근 다양한 행보를 통해 미래 외식업계 향후 방향성을 분명하게 드러내고 있다.최근 '배민파트너페스타'를 통해 내년 외식업 트렌드를 공유하고 업계와의 상생을 위한 기술 및 서비스 고도화 전략을 밝혔으며, 급변하는 외식업 환경 속에서 인공지능(AI)등 기술력을 활용해 파트너의 편의성을 높이고 동반성장 흐름을 이어간다는...",
-      "link": "https://www.techm.kr/news/articleView.html?idxno=147708",
+      "time": "15시간 전",
+      "summary": "글로벌 배틀그라운드 e스포츠 최강자를 가리는 '펍지 글로벌 챔피언십(PGC) 2025' 그랜드 파이널 1일차에서 5개 한국 팀 중 유일하게 상위권인 3위로 경기를 마무리한 T1이 우승에 대한 자신감을 표출했다.12일 태국 방콕 시암 파라곤에서 열린 PGC 2025 그랜드 파이널 1일차 경기 이후 기자들과 만난 신명관 T1 감독은 \"T1은 실전에 강하다\"며 ...",
+      "link": "https://www.techm.kr/news/articleView.html?idxno=147718",
       "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80",
       "category": "AI/테크",
       "type": "rss"
+    },
+    {
+      "title": "[카드뉴스] 배달의민족 '미래 전략' 총정리...외식업 파트너, 라이더까지 모두 품었다",
+      "source": "테크M",
+      "time": "16시간 전",
+      "summary": "배달의민족(배민)을 운영하는 우아한형제들이 최근 다양한 행보를 통해 미래 외식업계 향후 방향성을 분명하게 드러내고 있다.최근 '배민파트너페스타'를 통해 내년 외식업 트렌드를 공유하고 업계와의 상생을 위한 기술 및 서비스 고도화 전략을 밝혔으며, 급변하는 외식업 환경 속에서 인공지능(AI)등 기술력을 활용해 파트너의 편의성을 높이고 동반성장 흐름을 이어간다는...",
+      "link": "https://www.techm.kr/news/articleView.html?idxno=147708",
+      "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "title": "'미르의 전설' 저작권 분쟁, 위메이드의 판정승...대법원 액토즈 상고 모두 기각",
+      "source": "테크M",
+      "time": "16시간 전",
+      "summary": "위메이드가 액토즈소프트와의 '미르의 전설' 저작권 침해 정지 등 청구 소송 상고심에서 최종 승소했다.대법원은 11일 액토즈소프트 측이 제기한 상고를 모두 기각한다고 판결했다. 재판부는 '상고심절차에 관한 특례법'에 따라 원심판결에 중대한 법령 위반 등의 사유가 없다고 판단, 본안 심리 없이 상고를 기각하는 심리불속행 기각 결정을 내렸다.이번 대법원 판결로 ...",
+      "link": "https://www.techm.kr/news/articleView.html?idxno=147716",
+      "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "title": "[펍지 유나이티드] '원 월드, 투 챔피언'...한 무대 오른 PGC·PMGC 파이널 라운드 '스타트'",
+      "source": "테크M",
+      "time": "18시간 전",
+      "summary": "무대에 설치된 대형 스크린 중앙이 열리며 화려한 조명과 함께 DJ 알티(R.Tee)가 등장했다. 배틀그라운드 최상위 국제 e스포츠 '펍지 글로벌 챔피언십(PGC)'과 '배틀그라운드 모바일 글로벌 챔피언십(PMGC)'이 하나로 연결되는 상징적 순간이다.12일(현지시간) 펍지(PUBG) 배틀그라운드 최상위 국제 e스포츠 대회인 'PGC 2025'와 'PMGC ...",
+      "link": "https://www.techm.kr/news/articleView.html?idxno=147715",
+      "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80"
     },
     {
       "title": "페이페이 리 “AI 협업 능력이 학위보다 중요”",
       "source": "AI타임스",
-      "time": "21시간 전",
+      "time": "20시간 전",
       "summary": "‘AI 대모’ 페이페이 리 스탠포드대학교 교수가 “AI와 협업할 수 있는 능력이 학위보다 더 큰 경쟁력”이라고 강조했다. 실리콘 밸리에서는 기술 인재를 평가할 때 학력보다 AI 도구를 얼마나 능숙하게 활용할 수 있는지가 핵심 기준이 되고 있다는 취지다.리 교수는 11일(현지시간) 최근 팟캐스트 '팀 페리스 쇼' 인터뷰에서, 자신이 공동 창업한 AI 스타트업...",
       "link": "https://www.aitimes.com/news/articleView.html?idxno=204754",
-      "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80",
-      "category": "AI/테크",
-      "type": "rss"
+      "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80"
     },
     {
       "title": "구글, 영국에 '자동화 과학 연구소' 설립...\"AI로 신소재 혁신\"",
       "source": "AI타임스",
-      "time": "21시간 전",
+      "time": "20시간 전",
       "summary": "구글 딥마인드가 영국에 첫 ‘자동화 과학 연구실(Automated Science Laboratory)’을 설립하며 영국 정부와의 전략적 파트너십 강화에 나섰다. CNBC는 11일(현지시간) 딥마인드가 2026년 영국에 ‘자동화 과학 연구실’을 설립하고, 인공지능(AI) 활용 소재 과학 연구에 본격 착수할 계획이라고 전했다.이 연구소는 초전도체, 태양전지, ...",
       "link": "https://www.aitimes.com/news/articleView.html?idxno=204753",
-      "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80",
-      "category": "AI/테크",
-      "type": "rss"
+      "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80"
     },
     {
       "title": "구글, AI ‘사실성’ 표준 벤치마크 공개...\"실 성능 맞춰 적절한 모델 사용해야\"",
       "source": "AI타임스",
-      "time": "21시간 전",
+      "time": "20시간 전",
       "summary": "구글이 코딩 능력이나 지시 수행 등 문제 해결 중심의 평가 대신, 인공지능(AI)이 얼마나 사실에 기반한 답변을 제공하는지를 측정하는 새로운 벤치마크를 선보였다.구글은 11일(현지시간) AI의 사실성(factuality)을 측정하기 위한 첫 평가 도구 ‘팩츠 벤치마크 스위트(FACTS Benchmark Suite)’를 공개했다.팩츠는 사실성을 맥락 사실성과...",
       "link": "https://www.aitimes.com/news/articleView.html?idxno=204751",
-      "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80",
-      "category": "AI/테크",
-      "type": "rss"
+      "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80"
     },
     {
-      "title": "Flaw in photo booth maker’s website exposes customers’ pictures",
+      "title": "Reddit argues it isn’t like other social platforms in case against Australia’s social media ban",
       "source": "TechCrunch",
-      "time": "21분 전",
-      "summary": "Hama Film makes photo booths that upload pictures and videos online. But their backend systems have a simple flaw that allows anyone to download customer pictures....",
-      "link": "https://techcrunch.com/2025/12/12/flaw-in-photo-booth-makers-website-exposes-customers-pictures/",
-      "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80",
-      "category": "AI/테크",
-      "type": "rss"
+      "time": "59분 전",
+      "summary": "Reddit, one of the world's largest social platforms, is arguing that it doesn't meet the definition of \"social media platforms\" as it seeks to overturn Australia's law banning children under 16 years ...",
+      "link": "https://techcrunch.com/2025/12/12/reddit-argues-it-isnt-like-other-social-platforms-in-case-against-australias-social-media-ban/",
+      "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80"
     },
     {
-      "title": "Zevo wants to add robotaxis to its car-share fleet, starting with newcomer Tensor",
+      "title": "World launches its ‘super app,’ including crypto pay and encrypted chat features",
       "source": "TechCrunch",
-      "time": "1시간 전",
-      "summary": "As robotaxi adoption continues, wild ideas like personal ownership and renting them out are starting to pop up again....",
-      "link": "https://techcrunch.com/2025/12/12/zevo-wants-to-add-robotaxis-to-its-car-share-fleet-starting-with-newcomer-tensor/",
-      "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80",
-      "category": "AI/테크",
-      "type": "rss"
+      "time": "13시간 전",
+      "summary": "Tools for Humanity, the company behind the app, is seeking to expand its \"real human network.\"...",
+      "link": "https://techcrunch.com/2025/12/11/world-launches-its-super-app-including-crypto-pay-and-encrypted-chat-features/",
+      "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80"
     }
   ]
 }
