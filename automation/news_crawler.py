@@ -211,7 +211,15 @@ class NewsAutomation:
 
 def main():
     """메인 실행 함수"""
-    automation = NewsAutomation()
+    import sys
+    
+    # 커맨드라인 인자로 설정 파일 경로 받기
+    config_path = "config.json"
+    if len(sys.argv) > 1:
+        config_path = sys.argv[1]
+        print(f"📝 사용자 정의 설정 파일: {config_path}")
+    
+    automation = NewsAutomation(config_path)
     automation.run()
 
 

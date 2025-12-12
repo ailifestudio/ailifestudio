@@ -1,0 +1,37 @@
+{
+  "rss_feeds": [
+    {
+      "name": "테크M",
+      "url": "http://www.techm.kr/rss/allArticle.xml",
+      "max_items": 3
+    },
+    {
+      "name": "AI타임스",
+      "url": "https://www.aitimes.com/rss/allArticle.xml",
+      "max_items": 3
+    },
+    {
+      "name": "블로터",
+      "url": "https://www.bloter.net/feed",
+      "max_items": 3
+    },
+    {
+      "name": "IT조선",
+      "url": "http://it.chosun.com/site/data/rss/rss.xml",
+      "max_items": 3
+    },
+    {
+      "name": "지디넷코리아",
+      "url": "https://zdnet.co.kr/rss/allArticle.xml",
+      "max_items": 3
+    },
+    {
+      "name": "TechCrunch",
+      "url": "https://techcrunch.com/feed/",
+      "max_items": 2
+    }
+  ],
+  "max_articles": 20,
+  "use_ai_summary": true,
+  "openai_api_key": ""
+}

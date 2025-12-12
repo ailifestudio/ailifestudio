@@ -1,10 +1,58 @@
 {
-  "updatedAt": "2025-12-12 14:49",
+  "updatedAt": "2025-12-12 14:51",
   "articles": [
+    {
+      "title": "[카드뉴스] 배달의민족 '미래 전략' 총정리...외식업 파트너, 라이더까지 모두 품었다",
+      "source": "테크M",
+      "time": "16시간 전",
+      "summary": "배달의민족(배민)을 운영하는 우아한형제들이 최근 다양한 행보를 통해 미래 외식업계 향후 방향성을 분명하게 드러내고 있다.최근 '배민파트너페스타'를 통해 내년 외식업 트렌드를 공유하고 업계와의 상생을 위한 기술 및 서비스 고도화 전략을 밝혔으며, 급변하는 외식업 환경 속에서 인공지능(AI)등 기술력을 활용해 파트너의 편의성을 높이고 동반성장 흐름을 이어간다는...",
+      "link": "https://www.techm.kr/news/articleView.html?idxno=147708",
+      "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "title": "'미르의 전설' 저작권 분쟁, 위메이드의 판정승...대법원 액토즈 상고 모두 기각",
+      "source": "테크M",
+      "time": "16시간 전",
+      "summary": "위메이드가 액토즈소프트와의 '미르의 전설' 저작권 침해 정지 등 청구 소송 상고심에서 최종 승소했다.대법원은 11일 액토즈소프트 측이 제기한 상고를 모두 기각한다고 판결했다. 재판부는 '상고심절차에 관한 특례법'에 따라 원심판결에 중대한 법령 위반 등의 사유가 없다고 판단, 본안 심리 없이 상고를 기각하는 심리불속행 기각 결정을 내렸다.이번 대법원 판결로 ...",
+      "link": "https://www.techm.kr/news/articleView.html?idxno=147716",
+      "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "title": "[펍지 유나이티드] '원 월드, 투 챔피언'...한 무대 오른 PGC·PMGC 파이널 라운드 '스타트'",
+      "source": "테크M",
+      "time": "18시간 전",
+      "summary": "무대에 설치된 대형 스크린 중앙이 열리며 화려한 조명과 함께 DJ 알티(R.Tee)가 등장했다. 배틀그라운드 최상위 국제 e스포츠 '펍지 글로벌 챔피언십(PGC)'과 '배틀그라운드 모바일 글로벌 챔피언십(PMGC)'이 하나로 연결되는 상징적 순간이다.12일(현지시간) 펍지(PUBG) 배틀그라운드 최상위 국제 e스포츠 대회인 'PGC 2025'와 'PMGC ...",
+      "link": "https://www.techm.kr/news/articleView.html?idxno=147715",
+      "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "title": "페이페이 리 “AI 협업 능력이 학위보다 중요”",
+      "source": "AI타임스",
+      "time": "20시간 전",
+      "summary": "‘AI 대모’ 페이페이 리 스탠포드대학교 교수가 “AI와 협업할 수 있는 능력이 학위보다 더 큰 경쟁력”이라고 강조했다. 실리콘 밸리에서는 기술 인재를 평가할 때 학력보다 AI 도구를 얼마나 능숙하게 활용할 수 있는지가 핵심 기준이 되고 있다는 취지다.리 교수는 11일(현지시간) 최근 팟캐스트 '팀 페리스 쇼' 인터뷰에서, 자신이 공동 창업한 AI 스타트업...",
+      "link": "https://www.aitimes.com/news/articleView.html?idxno=204754",
+      "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "title": "구글, 영국에 '자동화 과학 연구소' 설립...\"AI로 신소재 혁신\"",
+      "source": "AI타임스",
+      "time": "20시간 전",
+      "summary": "구글 딥마인드가 영국에 첫 ‘자동화 과학 연구실(Automated Science Laboratory)’을 설립하며 영국 정부와의 전략적 파트너십 강화에 나섰다. CNBC는 11일(현지시간) 딥마인드가 2026년 영국에 ‘자동화 과학 연구실’을 설립하고, 인공지능(AI) 활용 소재 과학 연구에 본격 착수할 계획이라고 전했다.이 연구소는 초전도체, 태양전지, ...",
+      "link": "https://www.aitimes.com/news/articleView.html?idxno=204753",
+      "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "title": "구글, AI ‘사실성’ 표준 벤치마크 공개...\"실 성능 맞춰 적절한 모델 사용해야\"",
+      "source": "AI타임스",
+      "time": "20시간 전",
+      "summary": "구글이 코딩 능력이나 지시 수행 등 문제 해결 중심의 평가 대신, 인공지능(AI)이 얼마나 사실에 기반한 답변을 제공하는지를 측정하는 새로운 벤치마크를 선보였다.구글은 11일(현지시간) AI의 사실성(factuality)을 측정하기 위한 첫 평가 도구 ‘팩츠 벤치마크 스위트(FACTS Benchmark Suite)’를 공개했다.팩츠는 사실성을 맥락 사실성과...",
+      "link": "https://www.aitimes.com/news/articleView.html?idxno=204751",
+      "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80"
+    },
     {
       "title": "Reddit argues it isn’t like other social platforms in case against Australia’s social media ban",
       "source": "TechCrunch",
-      "time": "58분 전",
+      "time": "59분 전",
       "summary": "Reddit, one of the world's largest social platforms, is arguing that it doesn't meet the definition of \"social media platforms\" as it seeks to overturn Australia's law banning children under 16 years ...",
       "link": "https://techcrunch.com/2025/12/12/reddit-argues-it-isnt-like-other-social-platforms-in-case-against-australias-social-media-ban/",
       "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80"
@@ -15,110 +63,6 @@
       "time": "13시간 전",
       "summary": "Tools for Humanity, the company behind the app, is seeking to expand its \"real human network.\"...",
       "link": "https://techcrunch.com/2025/12/11/world-launches-its-super-app-including-crypto-pay-and-encrypted-chat-features/",
-      "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80"
-    },
-    {
-      "title": "Stanford’s star reporter takes on Silicon Valley’s ‘money-soaked’ startup culture",
-      "source": "TechCrunch",
-      "time": "13시간 전",
-      "summary": "His reporting on a Stanford University president put Theo Baker on the map, but his upcoming book may cement his reputation as the rare young journalist willing to challenge Silicon Valley's startup m...",
-      "link": "https://techcrunch.com/2025/12/11/stanfords-star-reporter-takes-on-silicon-valleys-money-soaked-startup-culture/",
-      "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80"
-    },
-    {
-      "title": "How to vibe-write a country hit",
-      "source": "The Verge",
-      "time": "26분 전",
-      "summary": "You may not even know it, but you've almost certainly encountered songs made mostly or even entirely with AI. If you've scrolled on TikTok the last few weeks, you've probably heard \"I Run\" a few times...",
-      "link": "https://www.theverge.com/podcast/843447/ai-music-country-suno-vergecast",
-      "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80"
-    },
-    {
-      "title": "A presidential refresher on wireless terminology, courtesy of Trump Mobile",
-      "source": "The Verge",
-      "time": "49분 전",
-      "summary": "Where's the Trump Phone? We're going to keep talking about it every week. We've reached out, as usual, to ask about the Trump Phone's whereabouts. As usual, we're still waiting for a response. In the ...",
-      "link": "https://www.theverge.com/tech/842937/trump-mobile-4g5g-4k-explainer",
-      "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80"
-    },
-    {
-      "title": "This Tetris-playing watch struggles with the one thing it should be great at",
-      "source": "The Verge",
-      "time": "1시간 전",
-      "summary": "The Tetris: My Play Watch may look like an Apple Watch, but it eschews most of the functionality you'll typically find on a smartwatch to focus on two things: playing Tetris and celebrating the game t...",
-      "link": "https://www.theverge.com/gadgets/842702/tetris-my-play-watch-smartwatch-hands-on",
-      "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80"
-    },
-    {
-      "title": "SQLite JSON at Full Index Speed Using Generated Columns",
-      "source": "Hacker News",
-      "time": "1시간 전",
-      "summary": "Article URL:https://www.dbpro.app/blog/sqlite-json-virtual-columns-indexingComments URL:https://news.ycombinator.com/item?id=46243904Points: 33# Comments: 4...",
-      "link": "https://www.dbpro.app/blog/sqlite-json-virtual-columns-indexing",
-      "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80"
-    },
-    {
-      "title": "Fedora: Open-source repository for long-term digital preservation",
-      "source": "Hacker News",
-      "time": "1시간 전",
-      "summary": "Article URL:https://fedorarepository.org/Comments URL:https://news.ycombinator.com/item?id=46243883Points: 17# Comments: 11...",
-      "link": "https://fedorarepository.org/",
-      "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80"
-    },
-    {
-      "title": "Why Isn't Online Age Verification Just Like Showing Your ID in Person?",
-      "source": "Hacker News",
-      "time": "1시간 전",
-      "summary": "Article URL:https://www.eff.org/deeplinks/2025/12/why-isnt-online-age-verification-just-showing-your-id-personComments URL:https://news.ycombinator.com/item?id=46243848Points: 13# Comments: 4...",
-      "link": "https://www.eff.org/deeplinks/2025/12/why-isnt-online-age-verification-just-showing-your-id-person",
-      "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80"
-    },
-    {
-      "title": "BBVA embeds AI into banking workflows using ChatGPT Enterprise",
-      "source": "AI News",
-      "time": "2시간 전",
-      "summary": "BBVA is embedding AI into core banking workflows using ChatGPT Enterprise to overhaul risk and service in the sector. For the banking industry, the challenge of generative AI is rarely about adoption;...",
-      "link": "https://www.artificialintelligence-news.com/news/bbva-embeds-ai-into-banking-workflows-using-chatgpt-enterprise/",
-      "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80"
-    },
-    {
-      "title": "Microsoft’s Copilot usage analysis exposes the 2am philosophy question trend",
-      "source": "AI News",
-      "time": "6시간 전",
-      "summary": "F. Scott Fitzgerald observed that “in a real dark night of the soul, it is always three o’clock in the morning.” Microsoft’s latest Copilot usage analysis suggests this nocturnal tendency toward exist...",
-      "link": "https://www.artificialintelligence-news.com/news/copilot-usage-analysis-2am-philosophy-questions/",
-      "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80"
-    },
-    {
-      "title": "Microsoft ‘Promptions’ fix AI prompts failing to deliver",
-      "source": "AI News",
-      "time": "1일 전",
-      "summary": "Microsoft believes it has a fix for AI prompts being given, the response missing the mark, and the cycle repeating. This inefficiency is a drain on resources. The “trial-and-error loop can feel unpred...",
-      "link": "https://www.artificialintelligence-news.com/news/microsoft-promptions-fix-ai-prompts-failing-to-deliver/",
-      "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80"
-    },
-    {
-      "title": "The Download: expanded carrier screening, and how Southeast Asia plans to get to space",
-      "source": "MIT Tech Review",
-      "time": "1시간 전",
-      "summary": "This is today’s edition of The Download, our weekday newsletter that provides a daily dose of what’s going on in the world of technology. Expanded carrier screening: Is it worth it? Carrier screening ...",
-      "link": "https://www.technologyreview.com/2025/12/12/1129478/the-download-expanded-carrier-screening-and-how-southeast-asia-plans-to-get-to-space/",
-      "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80"
-    },
-    {
-      "title": "Southeast Asia seeks its place in space",
-      "source": "MIT Tech Review",
-      "time": "3시간 전",
-      "summary": "It’s a scorching October day in Bangkok and I’m wandering through the exhibits at the Thai Space Expo, held in one of the city’s busiest shopping malls, when I do a double take. Amid the flashy space ...",
-      "link": "https://www.technologyreview.com/2025/12/12/1129235/dispatch-thai-space-expo-southeast-asia-exploration/",
-      "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80"
-    },
-    {
-      "title": "Expanded carrier screening: Is it worth it?",
-      "source": "MIT Tech Review",
-      "time": "4시간 전",
-      "summary": "This week I’ve been thinking about babies. Healthy ones. Perfect ones. As you may have read last week, my colleague Antonio Regalado came face to face with a marketing campaign in the New York subway ...",
-      "link": "https://www.technologyreview.com/2025/12/12/1129344/expanded-carrier-screening-is-it-worth-it/",
       "image": "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=800&q=80"
     }
   ]

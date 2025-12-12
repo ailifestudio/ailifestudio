@@ -20,8 +20,21 @@ git clone https://github.com/ailifestudio/ailifestudio.github.io.git
 cd ailifestudio.github.io
 
 # 의존성 설치
-cd automation
-pip install -r requirements.txt
+pip install -r automation/requirements.txt
+```
+
+### 1-1. 간편 실행 (추천)
+
+**Linux/Mac:**
+```bash
+./update_blog.sh                    # 영문 뉴스
+./update_blog.sh config_korean.json # 한글 뉴스
+```
+
+**Windows:**
+```cmd
+update_blog.bat                    # 영문 뉴스
+update_blog.bat config_korean.json # 한글 뉴스
 ```
 
 ### 2. OpenAI API 키 설정 (선택사항)
