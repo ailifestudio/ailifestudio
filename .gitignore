@@ -28,3 +28,6 @@ temp/
 
 # Auto-generated
 archive.json
+
+# WordPress credentials (NEVER commit!)
+automation/config_osmu.json

@@ -3,7 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Curator News</title>
+    <title>AI Curator News - AI Life Studio</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="AI와 테크 뉴스를 자동으로 큐레이팅하는 초고속 대시보드. 최신 기술 동향과 트렌드를 한눈에 확인하세요.">
+    <meta name="keywords" content="AI, 인공지능, 테크뉴스, 기술뉴스, 자동화, 큐레이션">
+    <meta name="author" content="AI Life Studio">
+    
     <!-- 디자인 도구 (Tailwind CSS) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 아이콘 도구 (Lucide) -->
@@ -87,8 +93,13 @@
         // 1. 데이터 불러오기 함수
         async function loadNews() {
             try {
-                // data.json 불러오기 시도
-                const response = await fetch('data.json?t=' + new Date().getTime());
+                // dashboard_summary.json 먼저 시도 (OSMU 시스템)
+                let response = await fetch('dashboard_summary.json?t=' + new Date().getTime());
+                
+                // 없으면 기존 data.json 시도 (하위 호환성)
+                if (!response.ok) {
+                    response = await fetch('data.json?t=' + new Date().getTime());
+                }
                 
                 if (!response.ok) {
                     throw new Error("파일 없음");

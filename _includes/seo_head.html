@@ -1,0 +1,75 @@
+<!-- 
+  SEO Head Component
+  ==================
+  Implements canonical URL system for "One Source Multi Use" (OSMU)
+  
+  Purpose:
+  - Points all SEO link juice from GitHub Pages to WordPress
+  - Prevents duplicate content penalties
+  - Centralizes SEO authority on WordPress site
+  
+  Usage:
+  Add this to <head> section of all GitHub Pages HTML files
+-->
+
+<!-- Canonical URL - Points to WordPress original -->
+<link rel="canonical" href="{{canonical_url}}" />
+
+<!-- Basic SEO Meta Tags -->
+<meta name="description" content="{{description}}" />
+<meta name="keywords" content="{{keywords}}" />
+<meta name="author" content="AI Life Studio" />
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="article" />
+<meta property="og:url" content="{{canonical_url}}" />
+<meta property="og:title" content="{{title}}" />
+<meta property="og:description" content="{{description}}" />
+<meta property="og:image" content="{{image}}" />
+<meta property="og:site_name" content="AI Life Studio" />
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:url" content="{{canonical_url}}" />
+<meta name="twitter:title" content="{{title}}" />
+<meta name="twitter:description" content="{{description}}" />
+<meta name="twitter:image" content="{{image}}" />
+
+<!-- Additional SEO -->
+<meta name="robots" content="index, follow" />
+<meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+<meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+
+<!-- Schema.org markup -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "{{title}}",
+  "image": "{{image}}",
+  "author": {
+    "@type": "Organization",
+    "name": "AI Life Studio"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "AI Life Studio",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://ailifestudio.github.io/logo.png"
+    }
+  },
+  "url": "{{canonical_url}}",
+  "datePublished": "{{date}}",
+  "dateModified": "{{date}}",
+  "description": "{{description}}",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "{{canonical_url}}"
+  }
+}
+</script>
+
+<!-- Noindex for GitHub Pages (optional - use if you want WordPress to be the only indexed version) -->
+<!-- Uncomment the line below if you want only WordPress to be indexed by search engines -->
+<!-- <meta name="robots" content="noindex, nofollow" /> -->

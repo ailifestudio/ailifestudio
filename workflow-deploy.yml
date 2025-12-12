@@ -1,0 +1,142 @@
+name: OSMU Deploy (Markdown → GitHub Pages → WordPress)
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '_posts/**'
+      - 'automation/**'
+      - '.github/workflows/deploy.yml'
+  
+  schedule:
+    # 매일 3회 자동 실행 (한국시간 기준)
+    - cron: '0 0,8,16 * * *'  # UTC 00:00, 08:00, 16:00 (KST 09:00, 17:00, 01:00)
+  
+  workflow_dispatch:
+    inputs:
+      skip_wordpress:
+        description: 'Skip WordPress sync (GitHub Pages only)'
+        required: false
+        default: 'false'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write  # Required for git push
+    
+    steps:
+      # 1. 저장소 체크아웃
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      # 2. Python 환경 설정
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      # 3. Python 의존성 설치
+      - name: Install Python dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r automation/requirements.txt
+      
+      # 4. OSMU 빌드 실행 (Markdown → JSON + WordPress)
+      - name: Build OSMU content
+        env:
+          WP_URL: ${{ secrets.WP_URL }}
+          WP_USERNAME: ${{ secrets.WP_USERNAME }}
+          WP_APP_PASSWORD: ${{ secrets.WP_APP_PASSWORD }}
+          SKIP_WORDPRESS: ${{ github.event.inputs.skip_wordpress }}
+        run: |
+          echo "🚀 Starting OSMU build process..."
+          
+          # config_osmu.json에 WordPress 자격 증명 주입
+          if [ -n "$WP_URL" ] && [ "$SKIP_WORDPRESS" != "true" ]; then
+            echo "🔧 Configuring WordPress credentials..."
+            cat > automation/config_osmu.json << EOF
+          {
+            "wordpress": {
+              "url": "$WP_URL",
+              "username": "$WP_USERNAME",
+              "app_password": "$WP_APP_PASSWORD"
+            },
+            "pagination": {
+              "items_per_page": 20,
+              "dashboard_items": 50
+            },
+            "seo": {
+              "enable_canonical": true,
+              "wordpress_is_primary": true
+            }
+          }
+          EOF
+          fi
+          
+          # OSMU 빌드 실행
+          python automation/build_and_sync.py
+          
+          echo "✅ OSMU build completed!"
+      
+      # 5. 생성된 파일 확인
+      - name: Check generated files
+        run: |
+          echo "📦 Generated files:"
+          ls -lh dashboard_summary.json || echo "⚠️ dashboard_summary.json not found"
+          ls -lh data/ || echo "⚠️ data/ directory not found"
+          
+          if [ -f "dashboard_summary.json" ]; then
+            echo "✅ Dashboard JSON generated"
+          else
+            echo "⚠️ Dashboard JSON missing - creating fallback"
+            # Fallback: data.json이 있으면 복사
+            if [ -f "data.json" ]; then
+              cp data.json dashboard_summary.json
+            fi
+          fi
+      
+      # 6. Git 설정
+      - name: Configure Git
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+      
+      # 7. 변경사항 커밋 및 푸시
+      - name: Commit and push changes
+        run: |
+          # 변경된 파일 확인
+          git status
+          
+          # JSON 파일과 Markdown 업데이트 커밋
+          git add dashboard_summary.json data/ _posts/ || true
+          
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "🤖 OSMU 자동 배포: $(date +'%Y-%m-%d %H:%M KST')"
+            git push origin main
+            echo "✅ Changes pushed to GitHub"
+          fi
+      
+      # 8. GitHub Pages 배포 확인
+      - name: Verify deployment
+        run: |
+          echo "✅ OSMU Deployment Complete!"
+          echo ""
+          echo "📊 Generated files:"
+          echo "   - dashboard_summary.json (main page fast load)"
+          echo "   - data/{category}/page_*.json (paginated data)"
+          echo ""
+          echo "🌐 Your site will be available at:"
+          echo "   https://ailifestudio.github.io/"
+          echo ""
+          echo "📝 Check WordPress sync results in the build logs above"
+
+# 워크플로우 실행 후 GitHub Pages는 자동으로 배포됩니다
+# Settings → Pages → Source: Deploy from a branch (main)
