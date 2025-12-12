@@ -101,42 +101,90 @@
             }
         }
 
+        // 전역 변수로 현재 카테고리와 모든 기사 저장
+        let allArticles = [];
+        let currentCategory = '전체';
+
         // 2. 화면 그리기 함수
         function renderApp(articles) {
-            const grid = document.getElementById('news-grid');
+            allArticles = articles; // 전체 기사 저장
             const categoryContainer = document.getElementById('category-list');
             
-            grid.innerHTML = ''; 
             categoryContainer.innerHTML = '';
 
             // 카테고리 버튼 만들기
             const categories = ['전체', 'AI/테크', '경제', '라이프', '글로벌'];
-            categories.forEach((cat, index) => {
+            categories.forEach((cat) => {
                 const btn = document.createElement('button');
-                btn.className = `whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-medium transition-all ${index === 0 ? 'bg-gray-900 text-white shadow-md' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`;
+                btn.className = `category-btn whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-medium transition-all ${cat === currentCategory ? 'bg-gray-900 text-white shadow-md' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'}`;
                 btn.innerText = cat;
+                btn.onclick = () => filterByCategory(cat);
                 categoryContainer.appendChild(btn);
             });
+
+            // 카테고리에 맞는 기사만 표시
+            renderArticles(filterArticles(currentCategory));
+        }
+
+        // 3. 카테고리 필터링 함수
+        function filterArticles(category) {
+            if (category === '전체') {
+                return allArticles;
+            }
+            return allArticles.filter(item => item.category === category || item.source === category);
+        }
+
+        // 4. 카테고리 버튼 클릭 시
+        function filterByCategory(category) {
+            currentCategory = category;
+            
+            // 버튼 스타일 업데이트
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                if (btn.innerText === category) {
+                    btn.className = 'category-btn whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-medium transition-all bg-gray-900 text-white shadow-md';
+                } else {
+                    btn.className = 'category-btn whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-medium transition-all bg-white text-gray-600 border border-gray-200 hover:bg-gray-50';
+                }
+            });
+            
+            // 기사 다시 렌더링
+            renderArticles(filterArticles(category));
+        }
+
+        // 5. 기사 렌더링 함수
+        function renderArticles(articles) {
+            const grid = document.getElementById('news-grid');
+            grid.innerHTML = '';
 
             // 뉴스 카드 하나씩 만들기
             articles.forEach(item => {
                 const card = document.createElement('div');
                 card.className = 'break-inside-avoid mb-4 bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-200';
                 
+                // AI 생성 글인지 확인
+                const isAIGenerated = item.type === 'ai_generated' || item.source === 'AI 자동 생성';
+                const articleLink = item.link && item.link !== '#' ? item.link : `article.html?id=${encodeURIComponent(item.title)}`;
+                
+                // 카테고리 표시 (AI 생성 글은 AI/테크로 표시)
+                const categoryBadge = item.category || 'AI/테크';
+                
                 let imageHtml = item.image ? 
-                    `<div class="relative h-48 overflow-hidden bg-gray-200">
+                    `<a href="${articleLink}" ${!isAIGenerated ? 'target="_blank"' : ''} class="block relative h-48 overflow-hidden bg-gray-200 cursor-pointer">
                         <img src="${item.image}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105" onerror="this.parentElement.style.display='none'">
-                     </div>` : '';
+                     </a>` : '';
                 
                 card.innerHTML = `
                     ${imageHtml}
                     <div class="p-4">
-                        <div class="flex items-center justify-between mb-2 text-xs text-gray-500">
-                            <span class="font-bold text-blue-600">${item.source}</span>
-                            <span>${item.time}</span>
+                        <div class="flex items-center justify-between mb-2 text-xs">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold px-2 py-1 rounded ${isAIGenerated ? 'bg-purple-100 text-purple-600' : 'bg-blue-100 text-blue-600'}">${categoryBadge}</span>
+                                ${isAIGenerated ? '<span class="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-2 py-1 rounded text-xs">🤖 AI 생성</span>' : ''}
+                            </div>
+                            <span class="text-gray-500">${item.time}</span>
                         </div>
                         
-                        <a href="${item.link}" target="_blank" class="block group">
+                        <a href="${articleLink}" ${!isAIGenerated ? 'target="_blank"' : ''} class="block group">
                             <h3 class="font-bold text-gray-900 text-lg leading-snug mb-2 group-hover:text-blue-600 transition-colors">
                                 ${item.title}
                             </h3>
@@ -150,8 +198,8 @@
                             <span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded flex items-center gap-1">
                                 <i data-lucide="sparkles" class="w-3 h-3"></i> AI 요약
                             </span>
-                            <a href="${item.link}" target="_blank" class="text-xs font-bold text-gray-400 hover:text-blue-500 flex items-center gap-1">
-                                원문 보기 <i data-lucide="external-link" class="w-3 h-3"></i>
+                            <a href="${articleLink}" ${!isAIGenerated ? 'target="_blank"' : ''} class="text-xs font-bold text-gray-400 hover:text-blue-500 flex items-center gap-1">
+                                ${isAIGenerated ? '전체 보기' : '원문 보기'} <i data-lucide="external-link" class="w-3 h-3"></i>
                             </a>
                         </div>
                     </div>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="article-title">기사 보기</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
+        body { font-family: "Pretendard Variable", Pretendard, -apple-system, sans-serif; }
+        
+        /* 콘텐츠 스타일 */
+        .article-content h2 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            margin: 2rem 0 1rem;
+            color: #1f2937;
+        }
+        
+        .article-content h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.75rem;
+            color: #374151;
+        }
+        
+        .article-content p {
+            margin: 1rem 0;
+            line-height: 1.75;
+            color: #4b5563;
+        }
+        
+        .article-content ul {
+            margin: 1rem 0;
+            padding-left: 1.5rem;
+            list-style: disc;
+        }
+        
+        .article-content li {
+            margin: 0.5rem 0;
+            line-height: 1.75;
+            color: #4b5563;
+        }
+        
+        .article-content strong {
+            font-weight: 600;
+            color: #1f2937;
+        }
+        
+        .article-content mark {
+            background: #fef3c7;
+            padding: 0.125rem 0.25rem;
+            border-radius: 0.25rem;
+        }
+        
+        .article-content pre {
+            margin: 1.5rem 0;
+            overflow-x: auto;
+        }
+        
+        /* 이미지 키워드 숨김 */
+        .article-content p:has([data-image-keyword]) {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- 상단 헤더 -->
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
+        <div class="max-w-4xl mx-auto px-4">
+            <div class="flex items-center justify-between h-14">
+                <a href="index.html" class="text-xl font-bold tracking-tight text-gray-900 hover:text-blue-600 transition-colors">
+                    ← Curator.<span class="text-blue-600">AI</span>
+                </a>
+                <span class="text-xs text-gray-400" id="category-badge">AI/테크</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- 로딩 -->
+    <div id="loading" class="max-w-4xl mx-auto px-4 py-12">
+        <div class="animate-pulse space-y-4">
+            <div class="h-8 bg-gray-200 rounded w-3/4"></div>
+            <div class="h-4 bg-gray-200 rounded w-1/4"></div>
+            <div class="h-64 bg-gray-200 rounded"></div>
+        </div>
+    </div>
+
+    <!-- 기사 내용 -->
+    <article id="article-container" class="max-w-4xl mx-auto px-4 py-12 hidden">
+        <!-- 헤더 -->
+        <div class="mb-8">
+            <div class="flex items-center gap-3 mb-4">
+                <span id="category" class="bg-purple-100 text-purple-600 px-3 py-1 rounded-full text-sm font-medium">AI/테크</span>
+                <span id="ai-badge" class="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-3 py-1 rounded-full text-sm">🤖 AI 생성</span>
+            </div>
+            <h1 id="title" class="text-4xl font-bold text-gray-900 mb-4"></h1>
+            <div class="flex items-center gap-4 text-sm text-gray-500">
+                <span id="source"></span>
+                <span>•</span>
+                <span id="time"></span>
+            </div>
+        </div>
+
+        <!-- 썸네일 -->
+        <div id="thumbnail-container" class="mb-8 rounded-2xl overflow-hidden">
+            <img id="thumbnail" class="w-full h-auto" onerror="this.parentElement.style.display='none'">
+        </div>
+
+        <!-- 본문 -->
+        <div id="content" class="article-content prose max-w-none bg-white p-8 rounded-2xl shadow-sm">
+            <!-- AI 생성 콘텐츠가 여기에 표시됩니다 -->
+        </div>
+
+        <!-- 하단 버튼 -->
+        <div class="mt-12 flex gap-4">
+            <a href="index.html" class="flex-1 bg-gray-900 text-white px-6 py-3 rounded-xl hover:bg-gray-800 transition-colors text-center font-medium">
+                ← 목록으로
+            </a>
+            <button onclick="window.print()" class="bg-white border border-gray-200 px-6 py-3 rounded-xl hover:bg-gray-50 transition-colors font-medium">
+                🖨️ 인쇄
+            </button>
+        </div>
+    </article>
+
+    <!-- 404 메시지 -->
+    <div id="not-found" class="max-w-4xl mx-auto px-4 py-12 text-center hidden">
+        <div class="text-6xl mb-4">😢</div>
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">기사를 찾을 수 없습니다</h2>
+        <p class="text-gray-600 mb-8">요청하신 기사가 존재하지 않거나 삭제되었습니다.</p>
+        <a href="index.html" class="inline-block bg-gray-900 text-white px-6 py-3 rounded-xl hover:bg-gray-800 transition-colors font-medium">
+            홈으로 돌아가기
+        </a>
+    </div>
+
+    <script>
+        async function loadArticle() {
+            try {
+                // URL에서 기사 제목 가져오기
+                const urlParams = new URLSearchParams(window.location.search);
+                const articleTitle = urlParams.get('id');
+                
+                if (!articleTitle) {
+                    showNotFound();
+                    return;
+                }
+
+                // data.json 로드
+                const response = await fetch('data.json?t=' + new Date().getTime());
+                if (!response.ok) throw new Error('데이터 로드 실패');
+                
+                const data = await response.json();
+                
+                // 제목으로 기사 찾기
+                const article = data.articles.find(a => a.title === decodeURIComponent(articleTitle));
+                
+                if (!article) {
+                    showNotFound();
+                    return;
+                }
+
+                // 기사 렌더링
+                renderArticle(article);
+                
+            } catch (error) {
+                console.error('기사 로드 오류:', error);
+                showNotFound();
+            }
+        }
+
+        function renderArticle(article) {
+            // 로딩 숨기고 기사 표시
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('article-container').classList.remove('hidden');
+
+            // 메타 정보
+            document.title = article.title + ' - Curator.AI';
+            document.getElementById('article-title').textContent = article.title;
+            document.getElementById('title').textContent = article.title;
+            document.getElementById('source').textContent = article.source;
+            document.getElementById('time').textContent = article.time;
+            document.getElementById('category').textContent = article.category || 'AI/테크';
+            document.getElementById('category-badge').textContent = article.category || 'AI/테크';
+
+            // AI 생성 배지
+            const isAI = article.type === 'ai_generated' || article.source === 'AI 자동 생성';
+            if (!isAI) {
+                document.getElementById('ai-badge').style.display = 'none';
+            }
+
+            // 썸네일
+            if (article.image) {
+                document.getElementById('thumbnail').src = article.image;
+            } else {
+                document.getElementById('thumbnail-container').style.display = 'none';
+            }
+
+            // 본문 내용
+            let content = article.content || article.summary;
+            
+            // [IMAGE:...] 키워드 제거
+            content = content.replace(/\[IMAGE:[^\]]+\]/g, '');
+            
+            document.getElementById('content').innerHTML = content;
+
+            // 아이콘 초기화
+            lucide.createIcons();
+        }
+
+        function showNotFound() {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('not-found').classList.remove('hidden');
+        }
+
+        // 페이지 로드 시 실행
+        loadArticle();
+    </script>
+</body>
+</html>
