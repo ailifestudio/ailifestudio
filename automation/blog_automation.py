@@ -142,17 +142,78 @@ class BlogAutomation:
             print(f"  ⚠️ 기존 데이터 로드 실패: {e}")
         return []
     
+    def archive_old_articles(self, articles: List[Dict], threshold: int = 50):
+        """
+        오래된 글을 아카이브 파일로 이동
+        
+        Args:
+            articles: 전체 기사 목록
+            threshold: 메인 페이지 최대 기사 수
+        
+        Returns:
+            (메인 기사 목록, 아카이브된 기사 수)
+        """
+        if len(articles) <= threshold:
+            return articles, 0
+        
+        # 메인: 최신 50개
+        main_articles = articles[:threshold]
+        
+        # 아카이브: 51번째부터
+        archive_articles = articles[threshold:]
+        
+        # 아카이브 파일 로드 (기존 아카이브 + 새 아카이브)
+        archive_path = 'archive.json'
+        existing_archive = []
+        
+        try:
+            if os.path.exists(archive_path):
+                with open(archive_path, 'r', encoding='utf-8') as f:
+                    archive_data = json.load(f)
+                    existing_archive = archive_data.get('articles', [])
+        except Exception as e:
+            print(f"  ⚠️ 아카이브 로드 실패: {e}")
+        
+        # 중복 제거하고 아카이브에 추가
+        archive_titles = {a['title'] for a in existing_archive}
+        new_archived = 0
+        
+        for article in archive_articles:
+            if article['title'] not in archive_titles:
+                existing_archive.insert(0, article)  # 최신 순 유지
+                new_archived += 1
+        
+        # 아카이브 파일 저장
+        if new_archived > 0 or not os.path.exists(archive_path):
+            archive_data = {
+                'updatedAt': datetime.now().strftime('%Y-%m-%d %H:%M'),
+                'totalArticles': len(existing_archive),
+                'articles': existing_archive
+            }
+            
+            with open(archive_path, 'w', encoding='utf-8') as f:
+                json.dump(archive_data, f, ensure_ascii=False, indent=2)
+            
+            print(f"📦 아카이브: {new_archived}개 새로 추가, 총 {len(existing_archive)}개 보관")
+        
+        return main_articles, len(archive_articles)
+    
     def create_data_json(self, articles: List[Dict], max_articles: int = 50) -> Dict:
         """
-        data.json 형식으로 변환 (기존 글 유지 + 새 글 추가)
+        data.json 형식으로 변환 (아카이브 시스템 포함)
         
         Args:
             articles: 새로 추가할 기사 목록
-            max_articles: 최대 보관 기사 수 (기본 50개)
+            max_articles: 메인 페이지 최대 기사 수 (기본 50개)
+        
+        Notes:
+            - 메인: 최신 50개 (빠른 로딩)
+            - 아카이브: 51개부터 모두 보관 (archive.json)
+            - 모든 글 영구 보존
         """
         # 1. 기존 기사 로드
         existing = self.load_existing_articles()
-        print(f"\n📚 기존 기사: {len(existing)}개")
+        print(f"\n📚 기존 메인 기사: {len(existing)}개")
         
         # 2. 새 기사 추가 (중복 제거)
         existing_titles = {article['title'] for article in existing}
@@ -165,17 +226,19 @@ class BlogAutomation:
         
         print(f"➕ 신규 기사: {new_count}개 추가")
         
-        # 3. 최대 개수 제한 (오래된 글 삭제)
-        if len(existing) > max_articles:
-            removed = len(existing) - max_articles
-            existing = existing[:max_articles]
-            print(f"🗑️  오래된 기사: {removed}개 삭제")
+        # 3. 아카이브 처리 (50개 초과 시)
+        main_articles, archived_count = self.archive_old_articles(existing, max_articles)
         
-        print(f"📊 총 기사: {len(existing)}개")
+        if archived_count > 0:
+            print(f"📦 아카이브로 이동: {archived_count}개")
+        
+        print(f"📊 메인 페이지: {len(main_articles)}개 (로딩 최적화)")
         
         return {
             'updatedAt': datetime.now().strftime('%Y-%m-%d %H:%M'),
-            'articles': existing
+            'totalArticles': len(main_articles),
+            'hasArchive': archived_count > 0,
+            'articles': main_articles
         }
     
     def save_data_json(self, data: Dict, output_path='data.json'):
