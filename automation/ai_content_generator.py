@@ -156,8 +156,7 @@ AI 실전 활용 주제 1개를 추천해줘.
         
         try:
             content = self._generate_with_retry(post_prompt)
-            response = type('obj', (object,), {'text': content})()
-            html_content = text.strip()
+            html_content = content.strip()
             
             # HTML 태그 정리
             html_content = self._clean_html(html_content)
