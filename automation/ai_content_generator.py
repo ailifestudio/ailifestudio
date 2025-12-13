@@ -178,7 +178,7 @@ AI 실전 활용 주제 1개를 추천해줘.
    - 실무 활용 예시
    - 주의사항 또는 한계점
    - 정리 요약
-4. 각 큰 섹션마다 이미지 키워드 1줄 삽입 ⚠️ 매우 중요!
+4. 이미지 키워드는 전체 글에 최대 3~5개만 삽입 ⚠️ 매우 중요!
    형식: [IMAGE:영어_설명]
    예시:
    - [IMAGE:modern workspace with laptop and coffee]
@@ -186,9 +186,11 @@ AI 실전 활용 주제 1개를 추천해줘.
    - [IMAGE:person using productivity tools on computer]
    
    ⚠️ 필수 규칙:
+   - **최대 5개 이미지만 삽입** (너무 많으면 글 가독성 저하!)
    - 이미지 키워드는 100% 영어로만 작성 (한글 절대 금지!)
    - 구체적이고 시각적인 설명 (3-8단어)
    - 검색 가능한 명확한 영어 키워드 사용
+   - 핵심 섹션에만 배치 (모든 섹션에 넣지 말 것!)
 5. HTML 태그만 사용 (허용: <h2>, <h3>, <p>, <ul>, <li>, <strong>, <mark>, <pre>, <br>)
 6. 중요 문장은 <strong> 또는 <mark>로 강조
 7. 실무 팁은 아래 스타일 박스 사용 (일반 텍스트용):
@@ -246,10 +248,16 @@ AI 실전 활용 주제 1개를 추천해줘.
         html = html.strip()
         return html
     
-    def _extract_image_keywords(self, html: str) -> List[str]:
-        """[IMAGE:...] 형식의 이미지 키워드 추출"""
+    def _extract_image_keywords(self, html: str, max_images: int = 5) -> List[str]:
+        """[IMAGE:...] 형식의 이미지 키워드 추출 (최대 5개 제한)"""
         pattern = r'\[IMAGE:([^\]]+)\]'
         keywords = re.findall(pattern, html)
+        
+        # 최대 개수 제한
+        if len(keywords) > max_images:
+            print(f"  ⚠️ 이미지 {len(keywords)}개 발견 → {max_images}개로 제한")
+            keywords = keywords[:max_images]
+        
         return keywords
     
     def generate_summary(self, content: str, max_length: int = 200) -> str:

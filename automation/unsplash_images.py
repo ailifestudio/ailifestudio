@@ -61,20 +61,28 @@ def search_unsplash_image(keyword: str, access_key: str = None) -> str:
     return placeholder_url
 
 
-def extract_keywords_from_content(content: str) -> list:
+def extract_keywords_from_content(content: str, max_images: int = 5) -> list:
     """
     콘텐츠에서 [IMAGE:...] 키워드 추출
     
     Args:
         content: HTML 콘텐츠
+        max_images: 최대 이미지 개수 (기본: 5개)
     
     Returns:
-        이미지 키워드 리스트
+        이미지 키워드 리스트 (최대 max_images개)
     """
     import re
     pattern = r'\[IMAGE:([^\]]+)\]'
     keywords = re.findall(pattern, content)
-    return [kw.strip() for kw in keywords]
+    keywords = [kw.strip() for kw in keywords]
+    
+    # 최대 개수 제한
+    if len(keywords) > max_images:
+        print(f"    ⚠️ 이미지 {len(keywords)}개 발견 → {max_images}개로 제한")
+        keywords = keywords[:max_images]
+    
+    return keywords
 
 
 def generate_image_with_nano_banana(prompt: str, aspect_ratio: str = "16:9") -> str:
