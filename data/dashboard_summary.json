@@ -1,7 +1,19 @@
 {
-  "updatedAt": "2025-12-13 13:02",
-  "total": 12,
+  "updatedAt": "2025-12-13 13:14",
+  "total": 13,
   "articles": [
+    {
+      "title": "AI 비서로 업무와 일상을 초개인화하여 자동화하는 실전 전략",
+      "source": "AI Life Studio",
+      "time": "2025-12-13 13:13",
+      "summary": "이 글은 현대 사회에서 AI 비서가 개인의 습관과 목표를 학습하여 업무와 일상을 초개인화하고 자동화하는 강력한 조력자로 진화하고 있음을 설명합니다. AI 비서를 삶에 깊숙이 통합하여 업무 효율성을 극대화하고 삶의 질을 향상시키는 구체적이고 실전적인 전략을 제시하며, 이를 위해 명확하고 상세한 초기 설정의 중요성을 강조합니다.",
+      "link": "/article.html?slug=2025-12-13-ai-article-131401",
+      "image": "https://picsum.photos/seed/4c983e2589c6a487/1280/720",
+      "category": "AI/테크",
+      "type": "markdown",
+      "slug": "2025-12-13-ai-article-131401",
+      "canonical_url": ""
+    },
     {
       "title": "ChatGPT로 나만의 AI 비서 만들어 업무 효율 높이는 최신 노하우",
       "source": "AI Life Studio",
