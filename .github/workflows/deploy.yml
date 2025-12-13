@@ -1,24 +1,61 @@
+name: Deploy OSMU Blog System
+
 on:
   push:
+    branches: [ main ]
     paths:
-      - 'contents/**'        # ✅ 표준 경로 감지
+      - 'contents/**'
       - 'automation/**'
+      - 'index.html'
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0,8,16 * * *'
 
-steps:
-  # ✅ contents/ 검증
-  - name: Verify Directory Structure
-    run: |
-      if [ ! -d "contents" ]; then
-        echo "❌ ERROR: contents/ missing!"
-        exit 1
-      fi
-  
-  # ✅ 빌드 실행
-  - name: Build Blog
-    run: python automation/build_blog.py
-  
-  # ✅ Artifact 배포
-  - name: Deploy
-    run: |
-      git add data/ feed/ contents/
-      git push origin main
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      
+      - name: 📦 Install Dependencies
+        run: |
+          pip install python-frontmatter requests markdown pyyaml
+      
+      - name: ✅ Verify Directory Structure
+        run: |
+          if [ ! -d "contents" ]; then
+            echo "❌ ERROR: contents/ directory missing!"
+            exit 1
+          fi
+          echo "✅ contents/ directory exists"
+          ls -la contents/
+      
+      - name: 🔨 Build Blog (Generate data/ and feed/)
+        run: python automation/build_blog.py
+      
+      - name: 📤 Deploy to GitHub
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "GitHub Actions Bot"
+          
+          git add data/ feed/ contents/
+          
+          if git diff --cached --quiet; then
+            echo "✅ No changes to deploy"
+          else
+            git commit -m "🤖 자동 배포: 블로그 빌드 완료 $(date +'%Y-%m-%d %H:%M')"
+            git push
+            echo "✅ Deployed successfully!"
+          fi
