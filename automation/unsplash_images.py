@@ -54,7 +54,8 @@ def search_unsplash_image(keyword: str, access_key: str = None) -> str:
     elif 'work' in keyword.lower() or 'office' in keyword.lower():
         image_id = 101 + (image_id % 50)  # 업무 관련
     
-    fallback_url = f"https://picsum.photos/seed/{keyword_hash[:16]}/800/600"
+    # 16:9 비율 (1280x720 또는 1920x1080)
+    fallback_url = f"https://picsum.photos/seed/{keyword_hash[:16]}/1280/720"
     print(f"    ⚠️ Fallback 이미지: {keyword} → {fallback_url}")
     return fallback_url
 
@@ -144,6 +145,15 @@ def add_images_to_content_with_generation(content: str, use_ai_generation: bool 
     
     def replace_image(match):
         keyword = match.group(1).strip()
+        
+        # 한글 키워드 검증 및 경고
+        if any('\uac00' <= char <= '\ud7a3' for char in keyword):
+            print(f"    ⚠️ 한글 키워드 발견: {keyword}")
+            # 기본 영어 키워드로 대체
+            keyword = "modern technology workspace"
+        
+        # 키워드 정제 (영어로 확인)
+        print(f"    🔍 이미지 검색: {keyword}")
         
         # 1차: Unsplash 시도
         image_url = search_unsplash_image(keyword)

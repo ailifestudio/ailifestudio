@@ -133,10 +133,17 @@ AI 실전 활용 주제 1개를 추천해줘.
    - 실무 활용 예시
    - 주의사항 또는 한계점
    - 정리 요약
-4. 각 큰 섹션마다 이미지 키워드 1줄 삽입
-   형식: [IMAGE:설명]
-   예: [IMAGE:ChatGPT interface showing conversation]
-   이미지 키워드는 반드시 영어로 구체적으로 작성
+4. 각 큰 섹션마다 이미지 키워드 1줄 삽입 ⚠️ 매우 중요!
+   형식: [IMAGE:영어_설명]
+   예시:
+   - [IMAGE:modern workspace with laptop and coffee]
+   - [IMAGE:AI chatbot interface on smartphone screen]
+   - [IMAGE:person using productivity tools on computer]
+   
+   ⚠️ 필수 규칙:
+   - 이미지 키워드는 100% 영어로만 작성 (한글 절대 금지!)
+   - 구체적이고 시각적인 설명 (3-8단어)
+   - 검색 가능한 명확한 영어 키워드 사용
 5. HTML 태그만 사용 (허용: <h2>, <h3>, <p>, <ul>, <li>, <strong>, <mark>, <pre>, <br>)
 6. 중요 문장은 <strong> 또는 <mark>로 강조
 7. 실무 팁은 아래 스타일 박스 사용 (일반 텍스트용):
@@ -219,18 +226,19 @@ AI 실전 활용 주제 1개를 추천해줘.
             return text[:max_length] + "..."
     
     def generate_thumbnail_prompt(self, topic: str) -> str:
-        """썸네일 이미지 생성용 프롬프트 생성"""
+        """썸네일 이미지 생성용 프롬프트 생성 (16:9 비율)"""
         prompt_request = f"""
-"{topic}" 주제에 어울리는 블로그 썸네일 이미지를 생성하기 위한
-DALL-E 또는 Midjourney 프롬프트를 영어로 작성해줘.
+Create an English image prompt for a blog thumbnail about "{topic}".
 
-조건:
-- 깔끔하고 모던한 스타일
-- 기술/AI 느낌
-- 텍스트는 포함하지 않음
-- 16:9 비율
+Requirements:
+- Clean and modern style
+- Tech/AI aesthetic
+- NO text overlays
+- 16:9 aspect ratio (1280x720 or 1920x1080)
+- Professional and appealing design
+- High quality, photorealistic or minimalist illustration
 
-프롬프트만 출력 (설명 없이)
+Output only the prompt in English (no explanations).
 """
         
         try:
@@ -280,7 +288,8 @@ DALL-E 또는 Midjourney 프롬프트를 영어로 작성해줘.
         
         # 5. 썸네일 생성 (첫 번째 이미지 키워드 사용)
         print("\n[5단계] 썸네일 이미지 설정 중...")
-        thumbnail_url = 'https://source.unsplash.com/800x600/?artificial-intelligence,technology'
+        # 16:9 비율 (1280x720) 사용
+        thumbnail_url = 'https://picsum.photos/seed/ai-tech/1280/720'
         
         if post['image_keywords']:
             first_keyword = post['image_keywords'][0]
