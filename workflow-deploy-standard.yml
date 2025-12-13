@@ -1,0 +1,188 @@
+name: Blog Deploy (Standard Directory Structure)
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'contents/**'           # ✅ contents/ 경로 감지 (표준)
+      - 'automation/**'
+      - '.github/workflows/deploy.yml'
+  
+  schedule:
+    # 매일 3회 자동 실행 (한국시간 기준)
+    - cron: '0 0,8,16 * * *'  # UTC 00:00, 08:00, 16:00 (KST 09:00, 17:00, 01:00)
+  
+  workflow_dispatch:
+    inputs:
+      skip_wordpress:
+        description: 'Skip WordPress sync'
+        required: false
+        default: 'false'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write  # Required for git push
+    
+    steps:
+      # 1. 저장소 체크아웃
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      # 2. Python 환경 설정
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      # 3. Python 의존성 설치
+      - name: Install Python dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r automation/requirements.txt
+      
+      # 4. 디렉토리 구조 검증
+      - name: Verify directory structure
+        run: |
+          echo "📁 Verifying standard directory structure..."
+          
+          # contents/ 필수 검증
+          if [ ! -d "contents" ]; then
+            echo "❌ ERROR: contents/ directory not found!"
+            echo "Please create contents/ and add Markdown files."
+            exit 1
+          fi
+          
+          # Markdown 파일 존재 확인
+          if [ -z "$(ls -A contents/*.md 2>/dev/null)" ]; then
+            echo "⚠️ WARNING: No Markdown files found in contents/"
+            echo "Skipping build..."
+            exit 0
+          fi
+          
+          echo "✅ Directory structure OK"
+          echo "📝 Found Markdown files:"
+          ls -1 contents/*.md
+      
+      # 5. 블로그 빌드 실행
+      - name: Build blog
+        env:
+          WP_URL: ${{ secrets.WP_URL }}
+          WP_USERNAME: ${{ secrets.WP_USERNAME }}
+          WP_APP_PASSWORD: ${{ secrets.WP_APP_PASSWORD }}
+          SKIP_WORDPRESS: ${{ github.event.inputs.skip_wordpress }}
+        run: |
+          echo "🚀 Starting blog build..."
+          
+          # WordPress 자격 증명 주입 (선택 사항)
+          if [ -n "$WP_URL" ] && [ "$SKIP_WORDPRESS" != "true" ]; then
+            echo "🔧 Configuring WordPress credentials..."
+            cat > automation/config_blog.json << EOF
+          {
+            "wordpress": {
+              "url": "$WP_URL",
+              "username": "$WP_USERNAME",
+              "app_password": "$WP_APP_PASSWORD"
+            },
+            "pagination": {
+              "items_per_page": 20,
+              "dashboard_items": 50
+            },
+            "categories": {
+              "it": "IT/Tech",
+              "ai": "AI",
+              "economy": "Economy",
+              "life": "Lifestyle",
+              "global": "Global"
+            }
+          }
+          EOF
+          fi
+          
+          # 빌드 실행
+          python automation/build_blog.py
+          
+          echo "✅ Blog build completed!"
+      
+      # 6. 생성된 파일 검증
+      - name: Verify generated files
+        run: |
+          echo "📦 Verifying generated files..."
+          
+          # data/ 디렉토리 확인
+          if [ ! -d "data" ]; then
+            echo "❌ ERROR: data/ directory not generated!"
+            exit 1
+          fi
+          
+          # dashboard_summary.json 확인
+          if [ ! -f "data/dashboard_summary.json" ]; then
+            echo "❌ ERROR: data/dashboard_summary.json not generated!"
+            exit 1
+          fi
+          
+          # feed/ 디렉토리 확인
+          if [ ! -d "feed" ]; then
+            echo "❌ ERROR: feed/ directory not generated!"
+            exit 1
+          fi
+          
+          # RSS 확인
+          if [ ! -f "feed/rss.xml" ]; then
+            echo "⚠️ WARNING: feed/rss.xml not generated"
+          fi
+          
+          echo "✅ All critical files generated successfully"
+          echo ""
+          echo "📊 Generated files:"
+          ls -lh data/dashboard_summary.json
+          ls -lh data/*/page_*.json | head -5
+          ls -lh feed/
+      
+      # 7. Git 설정
+      - name: Configure Git
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+      
+      # 8. 변경사항 커밋 및 푸시
+      - name: Commit and push changes
+        run: |
+          # 변경된 파일 확인
+          git status
+          
+          # data/ 와 feed/ 커밋 (✅ 표준 경로)
+          git add data/ feed/ contents/ || true
+          
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "🤖 자동 빌드: $(date +'%Y-%m-%d %H:%M KST')" \
+                       -m "Updated: data/ and feed/"
+            git push origin main
+            echo "✅ Changes pushed to GitHub"
+          fi
+      
+      # 9. 배포 완료 확인
+      - name: Deployment summary
+        run: |
+          echo "✅ Blog Deployment Complete!"
+          echo ""
+          echo "📊 Directory Structure:"
+          echo "   - contents/          → Markdown 원본"
+          echo "   - data/              → UI용 JSON"
+          echo "   - feed/              → WordPress용 피드"
+          echo ""
+          echo "🌐 Your site will be available at:"
+          echo "   https://ailifestudio.github.io/"
+          echo ""
+          echo "⏱️ Deployment takes ~5-10 minutes"
+
+# GitHub Pages는 main 브랜치에서 자동 배포됩니다
+# Settings → Pages → Source: Deploy from a branch (main)

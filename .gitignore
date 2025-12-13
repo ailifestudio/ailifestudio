@@ -31,3 +31,8 @@ archive.json
 
 # WordPress credentials (NEVER commit!)
 automation/config_osmu.json
+automation/config_blog.json
+
+# Legacy directories (deprecated)
+_posts/
+_includes/

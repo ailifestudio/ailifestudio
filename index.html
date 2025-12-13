@@ -93,12 +93,17 @@
         // 1. 데이터 불러오기 함수
         async function loadNews() {
             try {
-                // dashboard_summary.json 먼저 시도 (OSMU 시스템)
-                let response = await fetch('dashboard_summary.json?t=' + new Date().getTime());
+                // ✅ 표준 경로: data/dashboard_summary.json (Standard Directory Structure)
+                let response = await fetch('./data/dashboard_summary.json?t=' + new Date().getTime());
                 
-                // 없으면 기존 data.json 시도 (하위 호환성)
+                // Fallback: 루트의 dashboard_summary.json 시도 (하위 호환성)
                 if (!response.ok) {
-                    response = await fetch('data.json?t=' + new Date().getTime());
+                    response = await fetch('./dashboard_summary.json?t=' + new Date().getTime());
+                }
+                
+                // Fallback: 기존 data.json 시도 (레거시)
+                if (!response.ok) {
+                    response = await fetch('./data.json?t=' + new Date().getTime());
                 }
                 
                 if (!response.ok) {
