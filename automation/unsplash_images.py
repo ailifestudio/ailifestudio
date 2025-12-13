@@ -19,13 +19,12 @@ def search_unsplash_image(keyword: str, access_key: str = None) -> str:
     Returns:
         이미지 URL
     """
-    # 1차 시도: Pexels API (무료, 키워드 검색 지원, 고품질)
+    # Pexels API 사용 (무료, 키워드 검색, 고품질)
     try:
-        # Pexels API는 Authorization 필요 없이 query parameter로 사용 가능
         encoded_keyword = urllib.parse.quote(keyword)
         pexels_url = f"https://api.pexels.com/v1/search?query={encoded_keyword}&per_page=1&orientation=landscape"
         
-        # 공개 Pexels API 키 (제한적이지만 테스트 가능)
+        # Pexels API 키
         headers = {
             "Authorization": "563492ad6f91700001000001c9d8a3b8a0d4480c9c35c1c09441d5bd"
         }
@@ -35,16 +34,29 @@ def search_unsplash_image(keyword: str, access_key: str = None) -> str:
         if response.status_code == 200:
             data = response.json()
             if data.get('photos') and len(data['photos']) > 0:
-                return data['photos'][0]['src']['large']
+                image_url = data['photos'][0]['src']['large']
+                print(f"    ✅ Pexels 이미지: {keyword} → {image_url[:50]}...")
+                return image_url
     except Exception as e:
-        print(f"  ⚠️ Pexels API 오류: {e}")
+        print(f"    ⚠️ Pexels API 오류: {e}")
     
-    # 2차 시도: Lorem Picsum (완전 무료, 안정적)
+    # Fallback: 키워드 기반 고정 Placeholder
+    # 랜덤이 아닌 키워드 기반 해시로 일관된 이미지 제공
     import hashlib
-    keyword_hash = hashlib.md5(keyword.encode()).hexdigest()
+    keyword_hash = hashlib.md5(keyword.lower().encode()).hexdigest()
     image_id = int(keyword_hash[:8], 16) % 1000
     
-    return f"https://picsum.photos/800/600?random={image_id}"
+    # 특정 카테고리별 이미지 ID 범위 설정
+    if 'ai' in keyword.lower() or 'artificial' in keyword.lower():
+        image_id = 1 + (image_id % 50)  # AI 관련 이미지
+    elif 'laptop' in keyword.lower() or 'computer' in keyword.lower():
+        image_id = 51 + (image_id % 50)  # 컴퓨터 관련
+    elif 'work' in keyword.lower() or 'office' in keyword.lower():
+        image_id = 101 + (image_id % 50)  # 업무 관련
+    
+    fallback_url = f"https://picsum.photos/seed/{keyword_hash[:16]}/800/600"
+    print(f"    ⚠️ Fallback 이미지: {keyword} → {fallback_url}")
+    return fallback_url
 
 
 def extract_keywords_from_content(content: str) -> list:
