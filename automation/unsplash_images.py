@@ -31,16 +31,16 @@ def load_generated_images():
 
 def search_unsplash_image(keyword: str, access_key: str = None) -> str:
     """
-    이미지 URL 검색 (Gemini 생성 이미지 우선)
+    이미지 URL 검색 (Gemini 생성 이미지 우선, 스마트 매칭)
     
     Args:
         keyword: 검색 키워드 (영어)
         access_key: API 키 (선택사항, 사용 안 함)
     
     Returns:
-        이미지 URL (Gemini 생성 또는 플레이스홀더)
+        이미지 URL (Gemini 생성 또는 스마트 매칭)
     """
-    # 1순위: Gemini로 생성된 이미지 확인
+    # 1순위: Gemini로 생성된 이미지 확인 (정확한 매칭)
     generated_images = load_generated_images()
     if keyword in generated_images:
         image_url = generated_images[keyword]
@@ -48,8 +48,21 @@ def search_unsplash_image(keyword: str, access_key: str = None) -> str:
         print(f"       → {image_url[:60]}...")
         return image_url
     
-    # 2순위: 플레이스홀더 (이 키워드는 아직 생성 안 됨)
-    print(f"    ⚠️ 이미지 없음: '{keyword}'")
+    # 2순위: 스마트 매칭 (유사한 키워드 찾기)
+    try:
+        from smart_image_matcher import search_image_smart
+        print(f"    🔍 스마트 매칭 시도: '{keyword}'")
+        image_url = search_image_smart(keyword)
+        
+        # 매칭 성공 (플레이스홀더가 아닌 실제 이미지)
+        if image_url and not image_url.startswith("https://via.placeholder.com"):
+            print(f"       → {image_url[:60]}...")
+            return image_url
+    except Exception as e:
+        print(f"    ⚠️ 스마트 매칭 실패: {e}")
+    
+    # 3순위: 플레이스홀더 (이 키워드는 아직 생성 안 됨)
+    print(f"    ⚠️ 매칭 실패: '{keyword}'")
     print(f"       → generated_images.json에 없는 새 키워드입니다")
     
     # 16:9 비율 플레이스홀더
