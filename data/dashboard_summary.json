@@ -1,7 +1,19 @@
 {
-  "updatedAt": "2025-12-13 14:21",
-  "total": 16,
+  "updatedAt": "2025-12-13 14:46",
+  "total": 17,
   "articles": [
+    {
+      "title": "흩어진 아이디어와 자료를 AI로 '나만의 지식 지도'로 만드는 법",
+      "source": "AI/테크",
+      "time": "2025-12-13 14:46",
+      "summary": "정보의 홍수 속에서 흩어진 개인의 아이디어와 자료를 효과적으로 관리하고 연결하는 것은 어렵습니다. 인공지능(AI)은 방대한 데이터를 분석하고 숨겨진 패턴 및 연결 고리를 찾아내는 데 탁월하여 이 문제의 강력한 해결책이 될 수 있습니다. 따라서 AI를 활용해 파편화된 지식을 유기적으로 연결된 '나만의 지식 지도'로 구축하면 새로운 통찰력을 얻고 더 나은 의사",
+      "link": "/article.html?slug=2025-12-13-ai-article-144626",
+      "image": "https://via.placeholder.com/1280x720/1e293b/60a5fa?text=brain%20with%20interconnected%20neur",
+      "category": "AI/테크",
+      "type": "markdown",
+      "slug": "2025-12-13-ai-article-144626",
+      "canonical_url": ""
+    },
     {
       "title": "AI로 복잡한 정보를 꿰뚫어 보고 의사결정을 가속화하는 실전 전략",
       "source": "AI/테크",
