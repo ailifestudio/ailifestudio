@@ -1,7 +1,19 @@
 {
-  "updatedAt": "2025-12-13 12:22",
-  "total": 11,
+  "updatedAt": "2025-12-13 13:02",
+  "total": 12,
   "articles": [
+    {
+      "title": "ChatGPT로 나만의 AI 비서 만들어 업무 효율 높이는 최신 노하우",
+      "source": "AI Life Studio",
+      "time": "2025-12-13 13:02",
+      "summary": "ChatGPT는 급변하는 비즈니스 환경에서 업무 효율성을 극대화할 수 있는 개인화된 AI 비서로 주목받고 있습니다. 이는 단순히 질문에 답하는 것을 넘어 사용자의 특정 요구사항과 업무 스타일에 맞춰 학습하고 진화하며, 문서 요약, 아이디어 브레인스토밍 등 다양한 업무를 보조하여 생산성을 혁신할 잠재력을 가집니다. 과거 전문 솔루션이었던 AI 비서를 이제 누",
+      "link": "/article.html?slug=2025-12-13-chatgpt-ai",
+      "image": "https://picsum.photos/seed/78aa7292ed03d1f6/1280/720",
+      "category": "AI/테크",
+      "type": "markdown",
+      "slug": "2025-12-13-chatgpt-ai",
+      "canonical_url": ""
+    },
     {
       "title": "최신 AI (GPT-4o, Gemini)로 개인 생산성 극대화하는 5가지 실전 활용법",
       "source": "AI Life Studio",
