@@ -1,0 +1,24 @@
+on:
+  push:
+    paths:
+      - 'contents/**'        # ✅ 표준 경로 감지
+      - 'automation/**'
+
+steps:
+  # ✅ contents/ 검증
+  - name: Verify Directory Structure
+    run: |
+      if [ ! -d "contents" ]; then
+        echo "❌ ERROR: contents/ missing!"
+        exit 1
+      fi
+  
+  # ✅ 빌드 실행
+  - name: Build Blog
+    run: python automation/build_blog.py
+  
+  # ✅ Artifact 배포
+  - name: Deploy
+    run: |
+      git add data/ feed/ contents/
+      git push origin main
