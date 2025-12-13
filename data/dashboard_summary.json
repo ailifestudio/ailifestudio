@@ -1,7 +1,19 @@
 {
-  "updatedAt": "2025-12-13 14:18",
-  "total": 15,
+  "updatedAt": "2025-12-13 14:21",
+  "total": 16,
   "articles": [
+    {
+      "title": "AI로 복잡한 정보를 꿰뚫어 보고 의사결정을 가속화하는 실전 전략",
+      "source": "AI/테크",
+      "time": "2025-12-13 14:21",
+      "summary": "복잡한 비즈니스 환경에서 기업과 개인은 방대한 정보를 처리하고 신속한 의사결정을 내리는 데 어려움을 겪습니다. 인공지능(AI)은 이러한 한계를 극복하며 복잡한 정보를 꿰뚫어 보고, 패턴을 발견하며, 핵심 내용을 요약하여 의사결정 과정을 혁신적으로 가속화합니다. 특히 AI는 정보 수집 및 필터링을 자동화하여 필요한 정보를 효율적으로 정제하고 분석 기반을 마련",
+      "link": "/article.html?slug=2025-12-13-ai-article-142145",
+      "image": "https://via.placeholder.com/1280x720/1e293b/60a5fa?text=AI%20model%20processing%20various%20do",
+      "category": "AI/테크",
+      "type": "markdown",
+      "slug": "2025-12-13-ai-article-142145",
+      "canonical_url": ""
+    },
     {
       "title": "2025 AI 트렌드: 막힌 아이디어를 뚫는 창의적 프롬프트 활용법",
       "source": "AI/테크",
