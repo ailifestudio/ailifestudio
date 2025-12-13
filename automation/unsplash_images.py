@@ -8,56 +8,57 @@ import requests
 import urllib.parse
 
 
+def load_generated_images():
+    """Gemini로 생성된 이미지 맵 로드"""
+    try:
+        import json
+        import os
+        
+        json_path = os.path.join(os.path.dirname(__file__), 'generated_images.json')
+        
+        if os.path.exists(json_path):
+            with open(json_path, 'r', encoding='utf-8') as f:
+                images = json.load(f)
+                print(f"    ✅ Gemini 생성 이미지 {len(images)}개 로드됨")
+                return images
+        else:
+            print(f"    ℹ️  generated_images.json 파일 없음")
+            return {}
+    except Exception as e:
+        print(f"    ⚠️ 이미지 맵 로드 실패: {e}")
+        return {}
+
+
 def search_unsplash_image(keyword: str, access_key: str = None) -> str:
     """
-    무료 이미지 API에서 키워드에 맞는 이미지 검색
+    이미지 URL 검색 (Gemini 생성 이미지 우선)
     
     Args:
         keyword: 검색 키워드 (영어)
-        access_key: API 키 (선택사항)
+        access_key: API 키 (선택사항, 사용 안 함)
     
     Returns:
-        이미지 URL
+        이미지 URL (Gemini 생성 또는 플레이스홀더)
     """
-    # Pexels API 사용 (무료, 키워드 검색, 고품질)
-    try:
-        encoded_keyword = urllib.parse.quote(keyword)
-        pexels_url = f"https://api.pexels.com/v1/search?query={encoded_keyword}&per_page=1&orientation=landscape"
-        
-        # Pexels API 키
-        headers = {
-            "Authorization": "563492ad6f91700001000001c9d8a3b8a0d4480c9c35c1c09441d5bd"
-        }
-        
-        response = requests.get(pexels_url, headers=headers, timeout=10)
-        
-        if response.status_code == 200:
-            data = response.json()
-            if data.get('photos') and len(data['photos']) > 0:
-                image_url = data['photos'][0]['src']['large']
-                print(f"    ✅ Pexels 이미지: {keyword} → {image_url[:50]}...")
-                return image_url
-    except Exception as e:
-        print(f"    ⚠️ Pexels API 오류: {e}")
+    # 1순위: Gemini로 생성된 이미지 확인
+    generated_images = load_generated_images()
+    if keyword in generated_images:
+        image_url = generated_images[keyword]
+        print(f"    ✅ Gemini 생성 이미지 사용: {keyword}")
+        print(f"       → {image_url[:60]}...")
+        return image_url
     
-    # Fallback: 키워드 기반 고정 Placeholder
-    # 랜덤이 아닌 키워드 기반 해시로 일관된 이미지 제공
-    import hashlib
-    keyword_hash = hashlib.md5(keyword.lower().encode()).hexdigest()
-    image_id = int(keyword_hash[:8], 16) % 1000
+    # 2순위: 플레이스홀더 (Gemini로 생성 필요)
+    print(f"    🎨 Gemini 프롬프트 필요: {keyword}")
+    print(f"       → automation/gemini_image_generator.py 실행 필요")
     
-    # 특정 카테고리별 이미지 ID 범위 설정
-    if 'ai' in keyword.lower() or 'artificial' in keyword.lower():
-        image_id = 1 + (image_id % 50)  # AI 관련 이미지
-    elif 'laptop' in keyword.lower() or 'computer' in keyword.lower():
-        image_id = 51 + (image_id % 50)  # 컴퓨터 관련
-    elif 'work' in keyword.lower() or 'office' in keyword.lower():
-        image_id = 101 + (image_id % 50)  # 업무 관련
+    # 16:9 비율 플레이스홀더
+    placeholder_url = f"https://via.placeholder.com/1280x720/1e293b/60a5fa?text={urllib.parse.quote(keyword[:30])}"
     
-    # 16:9 비율 (1280x720 또는 1920x1080)
-    fallback_url = f"https://picsum.photos/seed/{keyword_hash[:16]}/1280/720"
-    print(f"    ⚠️ Fallback 이미지: {keyword} → {fallback_url}")
-    return fallback_url
+    print(f"    ⚠️ 플레이스홀더 사용: {placeholder_url}")
+    print(f"    ℹ️  실제 이미지는 Gemini로 생성 후 generated_images.json에 추가하세요")
+    
+    return placeholder_url
 
 
 def extract_keywords_from_content(content: str) -> list:
@@ -76,26 +77,59 @@ def extract_keywords_from_content(content: str) -> list:
     return [kw.strip() for kw in keywords]
 
 
+def generate_image_with_nano_banana(prompt: str, aspect_ratio: str = "16:9") -> str:
+    """
+    Nano Banana Pro를 사용해 AI 이미지 생성
+    
+    Args:
+        prompt: 이미지 생성 프롬프트 (영어)
+        aspect_ratio: 이미지 비율 (기본: 16:9)
+    
+    Returns:
+        생성된 이미지 AI Drive 경로 또는 URL (실패 시 None)
+    """
+    try:
+        # GenSpark AI image_generation 도구 사용
+        # 이 함수는 automation script에서 직접 호출되어야 함
+        # Python 스크립트 내에서는 subprocess로 호출
+        
+        print(f"    🎨 Nano Banana Pro 이미지 생성 요청: {prompt[:50]}...")
+        
+        # 프롬프트 개선 (품질 향상)
+        enhanced_prompt = f"{prompt}, high quality, professional photography, detailed, vibrant colors, clean composition"
+        
+        # 실제 구현: GenSpark image_generation API 호출
+        # (이 부분은 외부 시스템에서 처리되어야 함)
+        
+        # 현재는 구현 불가 (Python 스크립트에서 직접 호출 불가)
+        return None
+        
+    except Exception as e:
+        print(f"    ⚠️ AI 이미지 생성 실패: {e}")
+        return None
+
+
 def generate_image_with_ai(prompt: str) -> str:
     """
-    Nano Banana를 사용해 이미지 생성
+    Nano Banana를 사용해 이미지 생성 (레거시 함수, 호환성 유지)
     
     Args:
         prompt: 이미지 생성 프롬프트 (영어)
     
     Returns:
-        생성된 이미지 URL (실패 시 Unsplash fallback)
+        생성된 이미지 URL (실패 시 Picsum fallback)
     """
-    try:
-        import os
-        # GenSpark AI image generation API 사용
-        # 실제 구현은 환경에 따라 다를 수 있음
-        
-        # Fallback: Unsplash 사용
-        return search_unsplash_image(prompt)
-    except Exception as e:
-        print(f"    ⚠️ AI 이미지 생성 실패: {e}")
-        return search_unsplash_image(prompt)
+    # Nano Banana 시도
+    result = generate_image_with_nano_banana(prompt)
+    if result:
+        return result
+    
+    # Fallback: Picsum 사용
+    import hashlib
+    keyword_hash = hashlib.md5(prompt.lower().encode()).hexdigest()
+    fallback_url = f"https://picsum.photos/seed/{keyword_hash[:16]}/1280/720"
+    print(f"    ⚠️ Fallback 이미지: {fallback_url}")
+    return fallback_url
 
 
 def add_images_to_content(content: str, unsplash_key: str = None) -> str:

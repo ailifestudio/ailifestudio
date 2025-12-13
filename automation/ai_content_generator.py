@@ -89,11 +89,52 @@ class AIContentGenerator:
         
         raise Exception("최대 재시도 횟수 초과")
     
+    def get_existing_titles(self) -> list:
+        """기존 블로그 글 제목 목록 가져오기"""
+        try:
+            import json
+            import os
+            from pathlib import Path
+            
+            titles = []
+            
+            # data.json에서 제목 추출
+            data_json = Path(__file__).parent.parent / 'data.json'
+            if data_json.exists():
+                with open(data_json, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    # data.json이 articles 배열을 가진 객체인 경우
+                    articles = data.get('articles', data) if isinstance(data, dict) else data
+                    for item in articles:
+                        if 'title' in item:
+                            titles.append(item['title'].lower())
+            
+            # contents/*.md 파일에서 제목 추출
+            contents_dir = Path(__file__).parent.parent / 'contents'
+            if contents_dir.exists():
+                for md_file in contents_dir.glob('*.md'):
+                    with open(md_file, 'r', encoding='utf-8') as f:
+                        for line in f:
+                            if line.startswith('title:'):
+                                title = line.replace('title:', '').strip().strip('"\'')
+                                titles.append(title.lower())
+                                break
+            
+            print(f"  ℹ️  기존 글 {len(titles)}개 확인")
+            return titles
+        except Exception as e:
+            print(f"  ⚠️ 기존 글 확인 실패: {e}")
+            return []
+    
     def generate_trending_topic(self) -> str:
-        """트렌드 기반 AI 주제 자동 생성"""
+        """트렌드 기반 AI 주제 자동 생성 (중복 체크)"""
         print("\n[1단계] 트렌드 분석 중...")
         
-        topic_prompt = """
+        # 기존 제목 가져오기
+        existing_titles = self.get_existing_titles()
+        existing_titles_text = '\n'.join(f"- {title}" for title in existing_titles[:20])  # 최근 20개만
+        
+        topic_prompt = f"""
 유튜브, 네이버 블로그, 카페, 뉴스, X(트위터)에서
 최근 1주일간 가장 많이 언급되며 조회수와 검색량이 높은
 AI 실전 활용 주제 1개를 추천해줘.
@@ -104,6 +145,10 @@ AI 실전 활용 주제 1개를 추천해줘.
 - SEO 최적화된 제목
 - 클릭을 유도하되 과장 없는 제목
 - 2025년 최신 트렌드 반영
+
+⚠️ 중요: 아래 기존 블로그 글과 유사하거나 중복되는 주제는 절대 제외!
+기존 블로그 글 제목:
+{existing_titles_text}
 
 결과는 제목 1줄만 출력 (예: "ChatGPT로 업무 자동화하는 5가지 방법")
 """
