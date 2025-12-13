@@ -1,0 +1,25 @@
+{
+  "wordpress": {
+    "url": "",
+    "username": "",
+    "app_password": "",
+    "comment": "Optional: WordPress REST API credentials for auto-sync"
+  },
+  "pagination": {
+    "items_per_page": 20,
+    "dashboard_items": 50,
+    "comment": "dashboard_items: Number of posts shown on main page"
+  },
+  "categories": {
+    "it": "IT/Tech",
+    "ai": "AI",
+    "economy": "Economy",
+    "life": "Lifestyle",
+    "global": "Global"
+  },
+  "seo": {
+    "enable_canonical": true,
+    "wordpress_is_primary": true,
+    "comment": "When true, canonical URLs point to WordPress"
+  }
+}

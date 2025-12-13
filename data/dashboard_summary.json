@@ -1,7 +1,19 @@
 {
-  "updatedAt": "2025-12-13 00:09",
-  "total": 1,
+  "updatedAt": "2025-12-13 00:21",
+  "total": 2,
   "articles": [
+    {
+      "title": "OSMU 블로그 시스템에 오신 것을 환영합니다",
+      "source": "AI Life Studio",
+      "time": "오늘",
+      "summary": "표준 디렉토리 구조 기반의 완전 자동화된 블로그 시스템입니다. Markdown으로 글을 작성하면 GitHub Pages와 WordPress에 자동으로 배포됩니다.",
+      "link": "/article.html?slug=welcome",
+      "image": "https://images.unsplash.com/photo-1504805572947-34fad45aed93?auto=format&fit=crop&w=800&q=80",
+      "category": "IT/Tech",
+      "type": "markdown",
+      "slug": "welcome",
+      "canonical_url": ""
+    },
     {
       "title": "최신 AI로 스마트하게 일하는 5가지 생산성 비법",
       "source": "AI Life Studio",

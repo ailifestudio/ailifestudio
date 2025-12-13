@@ -1,0 +1,232 @@
+name: Deploy OSMU System
+
+on:
+  push:
+    paths:
+      - 'contents/**'      # ✅ 표준 경로 감지
+      - 'automation/**'
+      - 'index.html'
+    branches:
+      - main
+  
+  schedule:
+    # 매일 3회 자동 실행 (한국시간 기준)
+    - cron: '0 0,8,16 * * *'  # UTC 00:00, 08:00, 16:00 (KST 09:00, 17:00, 01:00)
+  
+  workflow_dispatch:      # 수동 실행 버튼
+
+permissions:
+  contents: write         # ✅ 파일 쓰기 권한 필수
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      # =====================================================
+      # 1. 코드 체크아웃
+      # =====================================================
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      # =====================================================
+      # 2. Python 환경 설정
+      # =====================================================
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      # =====================================================
+      # 3. Python 의존성 설치
+      # =====================================================
+      - name: Install Dependencies
+        run: |
+          pip install --upgrade pip
+          pip install python-frontmatter requests markdown
+      
+      # =====================================================
+      # 4. 표준 디렉토리 구조 검증 (필수)
+      # =====================================================
+      - name: Verify Standard Directory Structure
+        run: |
+          echo "🔍 Verifying standard directory structure..."
+          
+          # contents/ 필수 검증
+          if [ ! -d "contents" ]; then
+            echo "❌ ERROR: contents/ directory missing!"
+            echo "   Standard structure requires: contents/"
+            echo ""
+            echo "📖 Please create contents/ and add Markdown files."
+            echo "   Example: mkdir -p contents"
+            exit 1
+          fi
+          
+          # Markdown 파일 존재 확인
+          if [ -z "$(ls -A contents/*.md 2>/dev/null)" ]; then
+            echo "⚠️ WARNING: No Markdown files found in contents/"
+            echo "   Nothing to build. Skipping deployment."
+            exit 0
+          fi
+          
+          echo "✅ Standard directory structure verified"
+          echo "📝 Found Markdown files:"
+          ls -1 contents/*.md | head -10
+      
+      # =====================================================
+      # 5. WordPress 설정 주입 (선택 사항)
+      # =====================================================
+      - name: Configure WordPress Credentials (Optional)
+        env:
+          WP_URL: ${{ secrets.WP_URL }}
+          WP_USERNAME: ${{ secrets.WP_USERNAME }}
+          WP_APP_PASSWORD: ${{ secrets.WP_APP_PASSWORD }}
+        run: |
+          if [ -n "$WP_URL" ] && [ -n "$WP_USERNAME" ] && [ -n "$WP_APP_PASSWORD" ]; then
+            echo "🔧 Configuring WordPress credentials..."
+            cat > automation/config_blog.json << EOF
+          {
+            "wordpress": {
+              "url": "$WP_URL",
+              "username": "$WP_USERNAME",
+              "app_password": "$WP_APP_PASSWORD"
+            },
+            "pagination": {
+              "items_per_page": 20,
+              "dashboard_items": 50
+            },
+            "categories": {
+              "it": "IT/Tech",
+              "ai": "AI",
+              "economy": "Economy",
+              "life": "Lifestyle",
+              "global": "Global"
+            }
+          }
+          EOF
+            echo "✅ WordPress credentials configured"
+          else
+            echo "⚠️ WordPress credentials not found in secrets"
+            echo "   Skipping WordPress sync (optional feature)"
+          fi
+      
+      # =====================================================
+      # 6. 블로그 빌드 실행
+      # =====================================================
+      - name: Build Blog
+        run: |
+          echo "🚀 Starting blog build process..."
+          echo ""
+          
+          # 빌드 스크립트 실행
+          python automation/build_blog.py
+          
+          echo ""
+          echo "✅ Build completed successfully!"
+      
+      # =====================================================
+      # 7. 생성된 파일 검증
+      # =====================================================
+      - name: Verify Generated Files
+        run: |
+          echo "📦 Verifying generated files..."
+          
+          # data/ 디렉토리 확인
+          if [ ! -d "data" ]; then
+            echo "❌ ERROR: data/ directory not generated!"
+            exit 1
+          fi
+          
+          # dashboard_summary.json 확인
+          if [ ! -f "data/dashboard_summary.json" ]; then
+            echo "❌ ERROR: data/dashboard_summary.json not generated!"
+            exit 1
+          fi
+          
+          # feed/ 디렉토리 확인
+          if [ ! -d "feed" ]; then
+            echo "❌ ERROR: feed/ directory not generated!"
+            exit 1
+          fi
+          
+          echo "✅ All critical files generated successfully"
+          echo ""
+          echo "📊 Generated files:"
+          ls -lh data/dashboard_summary.json
+          echo ""
+          echo "📁 Category pages:"
+          find data -name "page_*.json" | head -5
+          echo ""
+          echo "📡 Feed files:"
+          ls -lh feed/
+      
+      # =====================================================
+      # 8. Git 설정
+      # =====================================================
+      - name: Configure Git
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+      
+      # =====================================================
+      # 9. 변경사항 커밋 및 푸시
+      # =====================================================
+      - name: Deploy to GitHub Pages (Main Branch)
+        run: |
+          echo "📤 Deploying changes..."
+          
+          # 변경사항 확인
+          git status --short
+          
+          # data/, feed/ 폴더 강제 추가 (표준 구조)
+          git add data/ feed/ contents/ || true
+          
+          # 변경사항이 있을 때만 커밋
+          if git diff --staged --quiet; then
+            echo "ℹ️ No changes to commit"
+          else
+            git commit -m "🚀 Auto-deploy: Update data & feed [skip ci]" \
+                       -m "Generated at: $(date +'%Y-%m-%d %H:%M:%S UTC')" \
+                       -m "Files: data/dashboard_summary.json, feed/rss.xml"
+            
+            git push origin main
+            
+            echo "✅ Changes deployed successfully"
+          fi
+      
+      # =====================================================
+      # 10. 배포 완료 요약
+      # =====================================================
+      - name: Deployment Summary
+        if: always()
+        run: |
+          echo ""
+          echo "============================================================"
+          echo "✅ OSMU System Deployment Complete!"
+          echo "============================================================"
+          echo ""
+          echo "📂 Standard Directory Structure:"
+          echo "   - contents/          → Markdown 원본"
+          echo "   - data/              → UI용 JSON"
+          echo "   - feed/              → WordPress용 피드"
+          echo ""
+          echo "🌐 Your site will be available at:"
+          echo "   https://$(echo ${{ github.repository }} | cut -d'/' -f1).github.io/"
+          echo ""
+          echo "⏱️ Deployment typically takes 5-10 minutes"
+          echo ""
+          echo "📊 Build Statistics:"
+          if [ -f "data/dashboard_summary.json" ]; then
+            echo "   - Posts: $(jq '.total' data/dashboard_summary.json 2>/dev/null || echo 'N/A')"
+          fi
+          if [ -d "data" ]; then
+            echo "   - Categories: $(find data -mindepth 1 -maxdepth 1 -type d | wc -l)"
+          fi
+          echo ""
+          echo "============================================================"
+
+# GitHub Pages는 main 브랜치에서 자동 배포됩니다
+# Settings → Pages → Source: Deploy from a branch (main)
