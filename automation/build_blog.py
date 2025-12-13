@@ -246,7 +246,7 @@ class BlogBuilder:
         for post in dashboard_posts:
             article = {
                 "title": post["title"],
-                "source": "AI Life Studio",
+                "source": post.get("source", post.get("category", "AI/테크")),
                 "time": self._format_time_ago(post["date"]),
                 "summary": post["summary"][:200] + "..." if len(post["summary"]) > 200 else post["summary"],
                 "link": post.get("canonical_url") or f"/article.html?slug={post['slug']}",
@@ -304,7 +304,7 @@ class BlogBuilder:
                 for post in page_posts:
                     article = {
                         "title": post["title"],
-                        "source": "AI Life Studio",
+                        "source": post.get("source", post.get("category", "AI/테크")),
                         "time": self._format_time_ago(post["date"]),
                         "summary": post["summary"],
                         "content": post["content"],
