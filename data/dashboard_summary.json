@@ -1,7 +1,19 @@
 {
-  "updatedAt": "2025-12-13 06:12",
-  "total": 4,
+  "updatedAt": "2025-12-13 06:18",
+  "total": 5,
   "articles": [
+    {
+      "title": "AI로 쏟아지는 정보, 10초 만에 핵심만 뽑아내 학습 효율 200% 높이는 비법",
+      "source": "AI Life Studio",
+      "time": "2025-12-13 06:18",
+      "summary": "AI 시대의 방대한 정보 속에서 학습 효율을 높이려면 핵심 내용을 빠르게 파악하는 것이 필수적입니다. 이 글은 AI 요약 도구를 활용하여 텍스트, 음성, 영상 등 다양한 형식의 콘텐츠에서 10초 만에 핵심을 추출하고 학습 효과를 200% 이상 향상시키는 구체적인 전략을 소개합니다. 이러한 AI 도구들은 정보 습득 시간을 획기적으로 단축시켜줍니다.",
+      "link": "/article.html?slug=2025-12-13-AI로-쏟아지는-정보,-10초-만에-핵심만-뽑아내-학습",
+      "image": "https://source.unsplash.com/800x600/?AI%20text%20summarization%20tool%20interface%20displaying%20a%20concise%20summary%20of%20a%20long%20article",
+      "category": "AI/테크",
+      "type": "markdown",
+      "slug": "2025-12-13-AI로-쏟아지는-정보,-10초-만에-핵심만-뽑아내-학습",
+      "canonical_url": ""
+    },
     {
       "title": "AI 비서로 업무와 일상을 스마트하게 자동화하는 최신 전략",
       "source": "AI Life Studio",
