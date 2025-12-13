@@ -2,6 +2,7 @@
 title: "나만의 AI 비서로 일상/업무 효율 높이는 시간 절약 실전법"
 date: 2025-12-13 05:58
 category: ai
+source: "AI/테크"
 summary: "이 글은 급변하는 디지털 시대에 AI 비서 활용을 통해 일상과 업무 효율을 극대화하고 시간을 절약하는 실전 전략을 제시합니다. AI 비서는 정보 검색, 문서 작성 등 반복적인 작업을 자동화하여 사용자가 핵심 업무와 창의적인 사고에 집중할 수 있도록 돕습니다. 성공적인 AI 비서 활용을 위해서는 AI 비서의 기본 개념을 이해하고 자신의 시간 낭비 요소를 파악"
 image: https://source.unsplash.com/800x600/?A%20person%20setting%20up%20an%20AI%20assistant%20on%20a%20smartphone%2C%20displaying%20a%20user-friendly%20interface
 tags: [AI, 자동화, 생산성]
