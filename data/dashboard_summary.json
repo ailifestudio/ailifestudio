@@ -1,7 +1,19 @@
 {
-  "updatedAt": "2025-12-13 07:09",
-  "total": 7,
+  "updatedAt": "2025-12-13 07:14",
+  "total": 8,
   "articles": [
+    {
+      "title": "2025 최신 멀티모달 AI로 일상 생산성 극대화하는 실전 활용법",
+      "source": "AI Life Studio",
+      "time": "2025-12-13 07:13",
+      "summary": "2025년 멀티모달 AI는 텍스트, 이미지, 오디오, 비디오 등 다양한 유형의 정보를 동시에 이해하고 통합 분석하여 기존 단일 모달리티 AI의 한계를 뛰어넘습니다. 이는 마치 인간처럼 세상을 인지하며 복잡한 상황을 깊이 이해하고 더욱 정교한 솔루션을 제공함으로써, 개인과 기업의 생산성을 획기적으로 극대화할 것입니다.",
+      "link": "/article.html?slug=2025-12-13-2025-ai",
+      "image": "https://picsum.photos/seed/f46ff8430e32d4a1/1280/720",
+      "category": "AI/테크",
+      "type": "markdown",
+      "slug": "2025-12-13-2025-ai",
+      "canonical_url": ""
+    },
     {
       "title": "AI 스마트워크: 반복 업무 자동화로 일상 생산성 극대화하는 5가지 실전 팁",
       "source": "AI Life Studio",
