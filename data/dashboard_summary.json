@@ -1,7 +1,19 @@
 {
-  "updatedAt": "2025-12-13 15:23",
-  "total": 18,
+  "updatedAt": "2025-12-13 15:28",
+  "total": 19,
   "articles": [
+    {
+      "title": "AI로 나만의 복합적 문제 해결: 초개인화된 실전 플랜 완성하기",
+      "source": "AI/테크",
+      "time": "2025-12-13 15:28",
+      "summary": "오늘날 우리는 정형화된 해결책으로는 대응하기 어려운 복잡한 문제에 직면해 있으며, AI 기술은 이러한 한계를 극복하고 초개인화된 문제 해결 솔루션을 제공하는 새로운 가능성을 열고 있습니다. AI는 개인의 특성 및 데이터를 기반으로 가장 적합하고 효과적인 실전 플랜을 도출하며, 이 글은 AI를 활용하여 복합적인 문제를 정의하고 초개인화된 해결책을 수립, 실행",
+      "link": "/article.html?slug=2025-12-13-ai-article-152834",
+      "image": "https://source.unsplash.com/1280x720/?AI,neural,network,diagram",
+      "category": "AI/테크",
+      "type": "markdown",
+      "slug": "2025-12-13-ai-article-152834",
+      "canonical_url": ""
+    },
     {
       "title": "개인 데이터 기반 AI 코치: 2025년 당신의 습관과 목표를 초지능적으로 관리",
       "source": "AI/테크",
