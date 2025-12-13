@@ -1,7 +1,19 @@
 {
-  "updatedAt": "2025-12-13 15:12",
+  "updatedAt": "2025-12-13 15:16",
   "total": 18,
   "articles": [
+    {
+      "title": "개인 데이터 기반 AI 코치: 2025년 당신의 습관과 목표를 초지능적으로 관리",
+      "source": "AI/테크",
+      "time": "2025-12-13 15:15",
+      "summary": "2025년, 우리의 삶은 단순한 정보 제공을 넘어 개인의 고유한 패턴과 잠재력을 이해하고 이끌어주는 지능적이고 개인화된 동반자를 요구합니다. 이에 발맞춰 개인 데이터 기반 AI 코치가 등장하여 스마트폰, 웨어러블, IoT 등 방대한 개인 정보를 통합 분석함으로써 라이프스타일, 건강, 감정까지 종합적으로 이해하고, 습관 및 목표 달성을 위한 최적의 맞춤형 가",
+      "link": "/article.html?slug=2025-12-13-ai-2025",
+      "image": "https://source.unsplash.com/1280x720/?data,analytics,dashboard,with,charts",
+      "category": "AI/테크",
+      "type": "markdown",
+      "slug": "2025-12-13-ai-2025",
+      "canonical_url": ""
+    },
     {
       "title": "AI로 복잡한 정보, '내 것'으로 만드는 초고속 이해 전략",
       "source": "AI/테크",
@@ -48,18 +60,6 @@
       "category": "AI/테크",
       "type": "markdown",
       "slug": "2025-12-13-2025-ai",
-      "canonical_url": ""
-    },
-    {
-      "title": "막힌 아이디어, AI로 뚫는 2025년 최신 브레인스토밍 실전 전략",
-      "source": "AI/테크",
-      "time": "2025-12-13 13:40",
-      "summary": "2025년의 빠르게 변화하는 비즈니스 환경에서는 혁신적인 아이디어가 필수적이지만, 기존 브레인스토밍 방식으로는 아이디어 고갈 문제를 해결하기 어렵습니다. 이에 2025년의 발전된 인공지능(AI)은 단순한 보조 도구를 넘어 정보 분석, 패턴 인식, 창의적 제안 능력으로 아이디어 발상과 확장의 핵심 파트너로 부상했습니다. 본 글은 막힌 아이디어를 뚫고 전에 없",
-      "link": "/article.html?slug=2025-12-13-ai-2025",
-      "image": "https://via.placeholder.com/1280x720/1e293b/60a5fa?text=creative%20thought%20process%20with%20",
-      "category": "AI/테크",
-      "type": "markdown",
-      "slug": "2025-12-13-ai-2025",
       "canonical_url": ""
     },
     {
