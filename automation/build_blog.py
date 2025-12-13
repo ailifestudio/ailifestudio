@@ -85,10 +85,10 @@ class BlogBuilder:
         self.items_per_page = self.config.get("pagination", {}).get("items_per_page", 20)
         self.dashboard_items = self.config.get("pagination", {}).get("dashboard_items", 50)
         
-        # 카테고리 매핑
+        # 카테고리 매핑 (키: 파일명/URL, 값: 블로그 표시명)
         self.categories = self.config.get("categories", {
             "it": "IT/Tech",
-            "ai": "AI",
+            "ai": "AI/테크",      # AI 생성 글은 "AI/테크"로 표시
             "economy": "Economy",
             "life": "Lifestyle",
             "global": "Global"
