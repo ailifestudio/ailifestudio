@@ -1,7 +1,19 @@
 {
-  "updatedAt": "2025-12-13 08:23",
-  "total": 10,
+  "updatedAt": "2025-12-13 12:22",
+  "total": 11,
   "articles": [
+    {
+      "title": "최신 AI (GPT-4o, Gemini)로 개인 생산성 극대화하는 5가지 실전 활용법",
+      "source": "AI Life Studio",
+      "time": "2025-12-13 12:21",
+      "summary": "이 글은 최신 AI 모델인 GPT-4o와 Gemini를 활용하여 개인 생산성을 극대화하는 방법을 다룹니다. 이 AI들은 단순한 정보 검색을 넘어 복잡한 문제 해결, 창의적 아이디어 발상, 방대한 정보 분석 등을 돕는 혁신적인 도구입니다. 본문에서는 이러한 AI를 개인 비서처럼 활용하여 효율성을 높이는 다섯 가지 실전 활용법을 소개합니다.",
+      "link": "/article.html?slug=2025-12-13-ai-gpt-4o-gemini-5",
+      "image": "https://picsum.photos/seed/615f33600b56155d/1280/720",
+      "category": "AI/테크",
+      "type": "markdown",
+      "slug": "2025-12-13-ai-gpt-4o-gemini-5",
+      "canonical_url": ""
+    },
     {
       "title": "AI 챗봇으로 일상 반복 업무 자동화! 스마트하게 일하는 5가지 실전 팁",
       "source": "AI Life Studio",
