@@ -128,34 +128,35 @@ AI 실전 활용 주제 1개를 추천해줘.
 2. 1500자 이상 작성
 3. 구성:
    - 제목 (<h2>)
-   - 서문 2-3문장 (<p>)
+   - 서문 2-3문단 (<p>)
    - 본문 4~6개 섹션 (<h3> 제목 + <p> 설명 또는 <ul><li> 리스트)
    - 실무 활용 예시
    - 주의사항 또는 한계점
    - 정리 요약
 4. 각 큰 섹션마다 이미지 키워드 1줄 삽입
    형식: [IMAGE:설명]
-   예: [IMAGE:ChatGPT interface on laptop screen]
+   예: [IMAGE:ChatGPT interface showing conversation]
    이미지 키워드는 반드시 영어로 구체적으로 작성
-5. HTML 태그만 사용 (허용: <h2>, <h3>, <p>, <ul>, <li>, <strong>, <mark>)
+5. HTML 태그만 사용 (허용: <h2>, <h3>, <p>, <ul>, <li>, <strong>, <mark>, <pre>, <br>)
 6. 중요 문장은 <strong> 또는 <mark>로 강조
-7. 실무 팁은 아래 스타일 박스 사용:
+7. 실무 팁은 아래 스타일 박스 사용 (일반 텍스트용):
 
-<p style="border-left:4px solid #3b82f6; padding-left:10px; background:#f0f9ff; padding:10px;">
-<strong>TIP:</strong> 내용
+<p style="border-left:4px solid #3b82f6; background:#f0f9ff; padding:15px; border-radius:4px; margin:15px 0;">
+<strong>💡 TIP:</strong> 내용
 </p>
 
-8. 예시 또는 팁 박스는 <pre> 태그 대신 스타일 박스 사용:
+8. 코드·명령어·프롬프트 예시는 반드시 <pre> 태그 사용:
 
-<p style="background:#1e293b; color:#e2e8f0; padding:15px; border-radius:8px; border-left:4px solid #3b82f6; line-height:1.6;">
-<strong style="color:#60a5fa;">예시:</strong><br>
-내용 (여러 줄 가능)
-</p>
-
-또는 코드 예시는:
-<pre style="background:#1e293b; color:#e2e8f0; padding:15px; border-radius:8px; white-space:pre-wrap; word-wrap:break-word; line-height:1.6; border:1px solid #334155;">
-코드 또는 명령어
+<pre style="background:#1e293b; color:#e2e8f0; padding:15px; border-radius:8px; white-space:pre-wrap; word-wrap:break-word; line-height:1.6; border:1px solid #334155; margin:15px 0;">
+코드나 명령어 또는 프롬프트 예시
+(여러 줄 가능, 자동 줄바꿈 적용됨)
 </pre>
+
+9. 주의사항·경고는 아래 스타일 박스 사용:
+
+<p style="border-left:4px solid #ef4444; background:#fef2f2; padding:15px; border-radius:4px; margin:15px 0;">
+<strong>⚠️ 주의:</strong> 내용
+</p>
 
 주제: {topic}
 
