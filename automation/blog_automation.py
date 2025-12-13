@@ -121,6 +121,7 @@ class BlogAutomation:
         """AI 생성 글을 Markdown 파일로 저장"""
         import os
         from datetime import datetime
+        import re
         
         # contents 디렉토리 확인
         contents_dir = '../contents'
@@ -129,7 +130,27 @@ class BlogAutomation:
         
         # 파일명 생성 (날짜-slug 형식)
         today = datetime.now().strftime('%Y-%m-%d')
-        title_slug = article['title'][:30].replace(' ', '-').replace('/', '-')
+        
+        # 영문 slug 생성 (한글 제거, 영문/숫자만 유지)
+        title = article['title']
+        # 1. 특수문자를 공백이나 하이픈으로 변환
+        title = title.replace('/', '-').replace(':', '-').replace('(', '').replace(')', '')
+        # 2. 영문, 숫자, 공백, 하이픈만 남기고 제거
+        title_slug = re.sub(r'[^a-zA-Z0-9\s-]', '', title)
+        # 3. 여러 공백을 하나의 하이픈으로
+        title_slug = re.sub(r'\s+', '-', title_slug.strip())
+        # 4. 여러 하이픈을 하나로
+        title_slug = re.sub(r'-+', '-', title_slug)
+        # 5. 앞뒤 하이픈 제거
+        title_slug = title_slug.strip('-')
+        
+        # slug가 비어있으면 기본값 사용
+        if not title_slug:
+            title_slug = f"ai-article-{datetime.now().strftime('%H%M%S')}"
+        
+        # 너무 길면 자르기 (최대 50자)
+        title_slug = title_slug[:50].rstrip('-')
+        
         filename = f"{today}-{title_slug}.md"
         filepath = os.path.join(contents_dir, filename)
         
