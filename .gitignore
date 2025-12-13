@@ -36,3 +36,8 @@ automation/config_blog.json
 # Legacy directories (deprecated)
 _posts/
 _includes/
+
+# API Keys (보안)
+automation/config_ai.json
+automation/config_blog.json
+automation/config_korean.json

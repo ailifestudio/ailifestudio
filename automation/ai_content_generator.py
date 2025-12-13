@@ -16,20 +16,76 @@ from typing import Dict, List
 
 class AIContentGenerator:
     def __init__(self, config_path="config_ai.json"):
-        """설정 파일 로드 및 Gemini API 초기화"""
+        """설정 파일 로드 및 Gemini API 초기화 (로테이션 지원)"""
         with open(config_path, 'r', encoding='utf-8') as f:
             self.config = json.load(f)
         
-        # API 키 로드 (환경 변수 우선)
-        api_key = os.getenv('GEMINI_API_KEY', self.config.get('gemini_api_key', ''))
+        # API 키 로드 (복수 키 지원)
+        self.api_keys = self._load_api_keys()
+        self.current_key_index = 0
         
-        if not api_key:
+        if not self.api_keys:
             raise ValueError("❌ GEMINI_API_KEY가 설정되지 않았습니다.")
         
-        genai.configure(api_key=api_key)
+        # 첫 번째 키로 초기화
+        genai.configure(api_key=self.api_keys[0])
         self.model = genai.GenerativeModel("gemini-2.5-flash")
         
-        print(f"✅ Gemini API 초기화 완료 (모델: gemini-2.5-flash)")
+        print(f"✅ Gemini API 초기화 완료 ({len(self.api_keys)}개 키, 모델: gemini-2.5-flash)")
+    
+    def _load_api_keys(self):
+        """API 키 로드 (단일/복수 지원)"""
+        # 방법 1: 복수 키 (JSON 배열)
+        keys_json = os.getenv('GEMINI_API_KEYS', '')
+        if keys_json:
+            try:
+                keys = json.loads(keys_json)
+                if isinstance(keys, list) and keys:
+                    return keys
+            except:
+                pass
+        
+        # 방법 2: 단일 키
+        single_key = os.getenv('GEMINI_API_KEY', self.config.get('gemini_api_key', ''))
+        if single_key:
+            return [single_key]
+        
+        return []
+    
+    def _rotate_key(self):
+        """다음 API 키로 전환"""
+        self.current_key_index = (self.current_key_index + 1) % len(self.api_keys)
+        new_key = self.api_keys[self.current_key_index]
+        genai.configure(api_key=new_key)
+        self.model = genai.GenerativeModel("gemini-2.5-flash")
+        print(f"🔄 API 키 #{self.current_key_index + 1}로 전환")
+    
+    def _generate_with_retry(self, prompt, max_retries=None):
+        """할당량 초과 시 자동으로 다음 키로 재시도"""
+        if max_retries is None:
+            max_retries = len(self.api_keys)
+        
+        for attempt in range(max_retries):
+            try:
+                text = self._generate_with_retry(prompt)
+                return text
+            except Exception as e:
+                error_msg = str(e).lower()
+                
+                # 할당량 초과 감지
+                if 'quota' in error_msg or 'limit' in error_msg or '429' in error_msg:
+                    print(f"⚠️ API 키 #{self.current_key_index + 1} 할당량 초과")
+                    
+                    if attempt < max_retries - 1:
+                        self._rotate_key()
+                        continue
+                    else:
+                        print("❌ 모든 API 키 할당량 초과")
+                        raise Exception("모든 API 키의 할당량이 초과되었습니다. 24시간 후 재시도하세요.")
+                else:
+                    raise
+        
+        raise Exception("최대 재시도 횟수 초과")
     
     def generate_trending_topic(self) -> str:
         """트렌드 기반 AI 주제 자동 생성"""
@@ -51,8 +107,8 @@ AI 실전 활용 주제 1개를 추천해줘.
 """
         
         try:
-            response = self.model.generate_content(topic_prompt)
-            topic = response.text.strip()
+            topic = self._generate_with_retry(topic_prompt)
+            topic = topic.strip()
             print(f"  ✅ 주제 생성 완료: {topic}")
             return topic
         except Exception as e:
@@ -99,8 +155,9 @@ AI 실전 활용 주제 1개를 추천해줘.
 """
         
         try:
-            response = self.model.generate_content(post_prompt)
-            html_content = response.text.strip()
+            content = self._generate_with_retry(post_prompt)
+            response = type('obj', (object,), {'text': content})()
+            html_content = text.strip()
             
             # HTML 태그 정리
             html_content = self._clean_html(html_content)
@@ -148,8 +205,8 @@ AI 실전 활용 주제 1개를 추천해줘.
         # AI로 요약
         try:
             summary_prompt = f"다음 글을 2-3문장으로 요약해줘:\n\n{text[:1000]}"
-            response = self.model.generate_content(summary_prompt)
-            return response.text.strip()
+            text = self._generate_with_retry(summary_prompt)
+            return text.strip()
         except:
             return text[:max_length] + "..."
     
@@ -169,8 +226,8 @@ DALL-E 또는 Midjourney 프롬프트를 영어로 작성해줘.
 """
         
         try:
-            response = self.model.generate_content(prompt_request)
-            return response.text.strip()
+            text = self._generate_with_retry(prompt_request)
+            return text.strip()
         except:
             return "modern AI technology workspace, clean design, blue gradient, tech illustration"
     
