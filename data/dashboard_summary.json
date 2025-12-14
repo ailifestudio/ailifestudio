@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2025-12-14 16:00",
-  "total": 26,
+  "updatedAt": "2025-12-14 16:07",
+  "total": 27,
   "articles": [
     {
       "title": "2025 최신 멀티모달 AI로 기획서 슬라이드 30분 만에 완성",
@@ -36,6 +36,18 @@
       "category": "AI/테크",
       "type": "markdown",
       "slug": "2025-12-14-ai-2025-ai-70",
+      "canonical_url": ""
+    },
+    {
+      "title": "직장인, AI 커리어 코치로 개인 역량 분석 및 맞춤형 성장 로드맵 10분 만에 설계",
+      "source": "AI/테크",
+      "time": "오늘",
+      "summary": "",
+      "link": "/article.html?slug=2025-12-14-160755-ai-article",
+      "image": "automation/generated_images/thumbnail_a4a79baa.png",
+      "category": "AI/테크",
+      "type": "markdown",
+      "slug": "2025-12-14-160755-ai-article",
       "canonical_url": ""
     },
     {
