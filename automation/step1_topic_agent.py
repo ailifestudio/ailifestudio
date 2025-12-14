@@ -180,14 +180,18 @@ class TopicAgent:
             return result
             
         except Exception as e:
-            print(f"\n❌ 주제 생성 실패: {e}")
-            # 폴백: 기본 주제 반환
-            return {
-                "title": "AI 실전 활용 가이드: 업무 효율 3배 높이는 법",
-                "generated_at": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-                "agent": "step1_topic_agent",
-                "fallback": True
-            }
+            error_msg = str(e)
+            print(f"\n❌ 주제 생성 실패: {error_msg}")
+            
+            # API 할당량 초과인 경우
+            if '할당량' in error_msg or 'quota' in error_msg.lower():
+                print("\n⏰ API 할당량이 초과되었습니다.")
+                print("   - Gemini API는 분당/일일 할당량이 있습니다")
+                print("   - 5~10분 후 재시도하거나 새 API 키를 추가하세요")
+                print("   - 또는 Google AI Studio에서 유료 플랜 구독")
+            
+            # 실패 시 예외 발생 (폴백 데이터 반환하지 않음)
+            raise Exception(f"주제 생성 실패: {error_msg}")
     
     def save_output(self, data: dict, output_path: str = "automation/intermediate_outputs/step1_topic.json"):
         """Step 1 출력 저장"""
@@ -206,16 +210,31 @@ def main():
     try:
         agent = TopicAgent()
         result = agent.generate_topic()
+        
+        # 검증: 실제 주제가 생성되었는지 확인
+        if not result.get('title') or result.get('fallback'):
+            raise Exception("유효한 주제가 생성되지 않았습니다")
+        
         agent.save_output(result)
         
         print("\n" + "="*60)
-        print("✅ Step 1 완료!")
+        print("✅ Step 1 완료! (주제 생성 성공)")
         print("="*60)
+        print(f"   📌 제목: {result['title']}")
         print(f"\n다음 단계: python automation/step2_writer_agent.py")
         
     except Exception as e:
-        print(f"\n❌ Step 1 실패: {e}")
+        print("\n" + "="*60)
+        print("❌ Step 1 실패!")
+        print("="*60)
+        print(f"   오류: {e}")
+        print("\n💡 해결 방법:")
+        print("   1. 5~10분 후 재시도")
+        print("   2. 새 API 키 추가 (GEMINI_API_KEYS 환경변수)")
+        print("   3. Google AI Studio에서 할당량 확인")
+        
         import traceback
+        print("\n🔍 상세 오류:")
         traceback.print_exc()
         exit(1)
 
