@@ -1,7 +1,19 @@
 {
-  "updatedAt": "2025-12-13 16:53",
-  "total": 21,
+  "updatedAt": "2025-12-14 01:09",
+  "total": 22,
   "articles": [
+    {
+      "title": "[AI 프레젠테이션] 2025년, AI로 전문가급 제안서 70% 빨리 만드는 법",
+      "source": "AI/테크",
+      "time": "2025-12-14 01:03",
+      "summary": "현재 많은 시간과 노력이 드는 제안서 작성 방식은 2025년, AI를 통해 혁명적으로 변화할 것입니다. AI는 기획부터 디자인, 최종 검토까지 전 과정에 걸쳐 전문가급 제안서를 70% 이상 빠르게 완성하도록 돕고, 단순 반복 작업을 넘어 아이디어를 고도화하는 창의적인 협업 과정으로 전환시킵니다.",
+      "link": "/article.html?slug=2025-12-14-ai-2025-ai-70",
+      "image": "https://picsum.photos/seed/ai-tech/1280/720",
+      "category": "AI/테크",
+      "type": "markdown",
+      "slug": "2025-12-14-ai-2025-ai-70",
+      "canonical_url": ""
+    },
     {
       "title": "AI 에이전트, 2025년 전략 보고서 작성 시간 50% 줄이는 비법 (코딩 없이)",
       "source": "AI/테크",
@@ -233,7 +245,7 @@
     {
       "title": "OSMU 블로그 시스템에 오신 것을 환영합니다",
       "source": "IT/Tech",
-      "time": "오늘",
+      "time": "어제",
       "summary": "표준 디렉토리 구조 기반의 완전 자동화된 블로그 시스템입니다. Markdown으로 글을 작성하면 GitHub Pages와 WordPress에 자동으로 배포됩니다.",
       "link": "/article.html?slug=welcome",
       "image": "https://images.unsplash.com/photo-1504805572947-34fad45aed93?auto=format&fit=crop&w=800&q=80",
@@ -245,7 +257,7 @@
     {
       "title": "최신 AI로 스마트하게 일하는 5가지 생산성 비법",
       "source": "AI/테크",
-      "time": "어제",
+      "time": "2일 전",
       "summary": "AI 도구를 활용해 업무 효율을 극대화하는 실전 팁 5가지를 소개합니다. ChatGPT, Notion AI, Midjourney 등 최신 AI 도구 활용법을 배워보세요.",
       "link": "/article.html?slug=2025-12-12-ai-productivity-tips",
       "image": "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=80",
