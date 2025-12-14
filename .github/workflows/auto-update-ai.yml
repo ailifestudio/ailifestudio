@@ -36,24 +36,38 @@ jobs:
         cd automation
         pip install -r requirements.txt
         
-    - name: 🤖 블로그 자동 업데이트 (AI + RSS)
+    - name: ✍️ Step 1 - 주제 선정
+      if: ${{ github.event.inputs.enable_ai != 'false' }}
       env:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         GEMINI_API_KEYS: ${{ secrets.GEMINI_API_KEYS }}
-        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       run: |
-        cd automation
-        
-        # AI 활성화 여부 확인
-        ENABLE_AI="${{ github.event.inputs.enable_ai || 'true' }}"
-        
-        if [ "$ENABLE_AI" = "true" ] && { [ -n "$GEMINI_API_KEY" ] || [ -n "$GEMINI_API_KEYS" ]; }; then
-          echo "🤖 AI 콘텐츠 생성 + RSS 크롤링 모드"
-          python blog_automation.py --rss-config config_korean.json
-        else
-          echo "📰 RSS 크롤링만 실행"
-          python blog_automation.py --rss-config config_korean.json --no-ai
-        fi
+        echo "🎯 Step 1: 블루오션 키워드 발굴 중..."
+        python automation/step1_topic_agent.py
+    
+    - name: 📝 Step 2 - 글 작성
+      if: ${{ github.event.inputs.enable_ai != 'false' }}
+      env:
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        GEMINI_API_KEYS: ${{ secrets.GEMINI_API_KEYS }}
+      run: |
+        echo "📝 Step 2: 구조화된 콘텐츠 작성 중..."
+        python automation/step2_writer_agent.py
+    
+    - name: 🎨 Step 3 - 이미지 생성 및 검수
+      if: ${{ github.event.inputs.enable_ai != 'false' }}
+      env:
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        GEMINI_API_KEYS: ${{ secrets.GEMINI_API_KEYS }}
+      run: |
+        echo "🎨 Step 3: 이미지 생성 및 Gemini Vision 검수 중..."
+        python automation/step3_image_audit_agent.py
+    
+    - name: 💾 Step 4 - data.json 저장
+      if: ${{ github.event.inputs.enable_ai != 'false' }}
+      run: |
+        echo "💾 Step 4: data.json 및 Markdown 파일 생성 중..."
+        python automation/step4_save_to_data_json.py
         
     - name: 🔨 블로그 빌드 (Markdown → HTML)
       run: |
