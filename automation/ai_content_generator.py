@@ -235,8 +235,12 @@ class AIContentGenerator:
    <p style=\"border-left:4px solid #ef4444; background:#fef2f2; padding:15px; border-radius:4px; margin:15px 0;\"><strong>⚠️ 주의:</strong> (이곳에 반드시 구체적인 경고 내용을 작성할 것)</p>
 
 8. 코드/명령어 박스 스타일 (반드시 아래 코드 복사):
-   <pre style=\"background:#1e293b; color:#e2e8f0; padding:15px; border-radius:8px; white-space:pre-wrap; word-wrap:break-word; line-height:1.6; border:1px solid #334155; margin:15px 0;\">코드 내용</pre>
-
+   **코드·명령어 박스 스타일 (가독성 개선 버전)**
+   - 기존 <pre> 태그 대신 호환성이 좋은 <div> 태그를 사용합니다.
+   <div style="background:#f4f4f5; color:#171717; padding:20px; border-radius:8px; white-space:pre-wrap; word-wrap:break-word; line-height:1.6; border:1px solid #d4d4d8; margin:15px 0; font-family:monospace; font-size:0.95em;">
+   코드나 명령어 내용
+   (자동 줄바꿈 및 띄어쓰기 유지됨)
+   </div>
 ---
 
 # [Step-by-Step 실행 지침]
