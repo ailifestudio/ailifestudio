@@ -75,6 +75,8 @@ class WriterAgent:
         """구조화된 콘텐츠 생성 (JSON 형식)"""
         print("\n" + "="*60)
         print("📝 Step 2: Writer & Art Director Agent")
+        print("   📁 automation/step2_writer_agent.py")
+        print("   ⚙️  설정 위치: 라인 81-180 (글 작성 프롬프트 + 이미지 설명)")
         print("="*60)
         
         # 프롬프트: 구조화된 JSON 출력 요청

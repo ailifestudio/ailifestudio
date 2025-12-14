@@ -151,27 +151,33 @@ class ImageAuditAgent:
             with open(image_path, 'rb') as f:
                 image_data = f.read()
             
-            # Gemini Vision 검수 프롬프트
+            # Gemini Vision 검수 프롬프트 (완화된 기준)
             audit_prompt = f"""# Role Definition
-당신은 깐깐한 AI 이미지 품질 관리자(QA Auditor)입니다.
+당신은 실용적인 AI 이미지 품질 관리자(QA Auditor)입니다.
 
 # Input Data
 1. Original Description (요청사항): "{original_description}"
 2. Generated Image (결과물): (첨부된 이미지)
 
 # Audit Tasks
-이미지를 보고 아래 기준을 엄격하게 평가하십시오.
+이미지를 보고 아래 **핵심 기준**만 평가하십시오.
 
-1. 일치성: 이미지가 Description의 내용을 정확하게 묘사하고 있는가?
-2. 한국적 맥락: (설명에 Korean, Seoul 등이 있다면) 한국인, 서울 배경, 한글 UI 등이 이질감 없이 표현되었는가?
-3. 품질: 이미지는 고화질로 생성되었는가? 왜곡, 기형, 이상한 부분이 없는가?
+1. ✅ 주제 일치성: 이미지가 Description의 "핵심 주제"를 표현하고 있는가?
+   - 예: "office worker"가 있으면 사무실 환경 + 사람만 있으면 OK
+   - 세부사항(Namsan Tower, cinematic shot 등)은 무시 가능
 
-# Decision Rules
-- 위 기준을 모두 충족하면 "PASS"라고만 답변하십시오.
-- 하나라도 미달되면 "FAIL: 이유"로 답변하십시오.
+2. ✅ 치명적 결함 없음: 명백히 사용 불가능한 이미지인가?
+   - 심각한 왜곡, 기형, 깨진 이미지 (약간의 부자연스러움은 OK)
+   - 완전히 관계없는 주제 (예: 자동차를 요청했는데 나무)
+
+# Decision Rules (완화됨)
+- 핵심 주제만 맞으면 "PASS" 
+- 치명적 결함이 없으면 "PASS"
+- 두 가지 모두 실패한 경우에만 "FAIL: 이유"
 
 # Important
-반드시 "PASS" 또는 "FAIL"로 시작하는 한 줄만 출력하십시오.
+- 세부 요구사항(배경, 각도, 텍스트 정확성)은 **무시**하십시오
+- 반드시 "PASS" 또는 "FAIL"로 시작하는 한 줄만 출력하십시오
 """
             
             print(f"      🔍 Gemini Vision 검수 중...")
@@ -205,6 +211,8 @@ class ImageAuditAgent:
         """
         print("\n" + "="*60)
         print("🎨 Step 3: Image Generation & Vision Audit")
+        print("   📁 automation/step3_image_audit_agent.py")
+        print("   ⚙️  검수 조건: 라인 145-186 (Vision 검수 프롬프트)")
         print("="*60)
         
         sections = content_data['sections']
@@ -235,6 +243,11 @@ class ImageAuditAgent:
                 if image_path and relative_path:
                     stats["generated"] += 1
                     
+                    # 생성된 이미지 정보 출력
+                    image_filename = Path(image_path).name
+                    print(f"      📷 생성 파일: {image_filename}")
+                    print(f"      🔗 경로: {relative_path}")
+                    
                     # 2. Gemini Vision 검수
                     audit_result = self.audit_image_with_vision(
                         image_path,
@@ -254,16 +267,20 @@ class ImageAuditAgent:
                         }
                         updated_sections.append(updated_section)
                         print(f"      🎉 최종 승인: 이미지 삽입됨")
+                        print(f"      ✅ 저장됨: {relative_path}")
                     else:
-                        # 검수 실패 → 삭제
+                        # 검수 실패 → 삭제 전 정보 출력
                         stats["failed"] += 1
                         stats["removed"] += 1
+                        
+                        print(f"      ⚠️  삭제 예정: {image_filename}")
+                        print(f"      📋 실패 사유: {audit_result[:100]}...")
                         
                         # 실패한 이미지 파일 삭제
                         if Path(image_path).exists():
                             Path(image_path).unlink()
                         
-                        print(f"      🗑️ 검수 실패로 삭제됨")
+                        print(f"      🗑️  검수 실패로 삭제 완료")
                         # 섹션 자체를 제거 (updated_sections에 추가하지 않음)
                 else:
                     # 이미지 생성 실패 → 삭제

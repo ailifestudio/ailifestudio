@@ -119,6 +119,8 @@ class TopicAgent:
         """트렌드 분석 및 블루오션 주제 생성"""
         print("\n" + "="*60)
         print("🎯 Step 1: Trend & Topic Agent")
+        print("   📁 automation/step1_topic_agent.py")
+        print("   ⚙️  설정 위치: 라인 128-180 (토픽 생성 프롬프트)")
         print("="*60)
         
         existing_titles = self.get_existing_titles()
