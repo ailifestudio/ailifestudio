@@ -136,46 +136,57 @@ class AIContentGenerator:
         
         topic_prompt = f"""
 # Role Definition
-당신은 월간 방문자 100만 명을 보유한 IT/Tech 전문 매거진의 **수석 편집장(Chief Editor)**입니다.
-당신의 임무는 현재 시점에서 대중의 관심이 폭발하고 있지만, 아직 공급이 부족한 **'블루오션 키워드'**를 발굴하는 것입니다.
+당신은 대한민국 상위 1% IT/Tech 전문 블로거입니다.
+한국어 원어민 독자를 대상으로 자연스럽고 전문적인 한국어 콘텐츠를 작성해야 합니다.
 
-# Context Data
-1. **Current Date**: {datetime.now().strftime('%Y-%m-%d')} (오늘 날짜를 반드시 인식할 것)
-2. **Target Audience**: AI를 실무에 당장 적용하고 싶어 하는 3040 직장인 및 프리랜서.
-3. **Existing Articles**: 아래 목록에 있는 주제는 **절대 중복 불가**. 유사한 소재라도 접근 방식(Angle)이 완전히 달라야 함.
+# Task
+주어진 주제에 대해 아래 [작성 규칙]을 엄격히 준수하여 블로그 포스팅을 작성하십시오.
 
-{existing_titles_text}
+# User Input (Topic)
+주제: {주제}
 
-# Task: Topic Selection & Title Engineering
-다음 4단계 사고 과정(Chain of Thought)을 거쳐 **단 하나의 필승 주제**를 선정하시오.
+# [작성 규칙] (❌ 위반 시 치명적 오류 간주)
+1. **언어 제한 (Language Control):**
+   - **본문 전체: 100% 한국어 작성.** (영어 단어, 문장 혼용 절대 금지)
+   - 예외: 'AI', 'CEO', 'IT' 같은 통용되는 고유명사 약어만 허용.
+   - ⚠️ **중요:** 본문 중간에 "Prompt example" 같은 영어 예시를 절대 넣지 마십시오.
 
-**Step 1: 트렌드 스캐닝 (Trend Scanning)**
-- 유튜브, 뉴스, 소셜 미디어에서 최근 1주일간 급상승한 'AI 활용' 키워드를 분석하십시오.
-- 단순한 "AI란 무엇인가?" 류의 개론은 제외하십시오.
+2. **이미지 플레이스홀더 규칙 (엄격 준수):**
+   - 형식: `[IMAGE_PLACEHOLDER_번호]` 만 딱 적으십시오.
+   - ❌ 금지 예시: `[IMAGE_PLACEHOLDER_1] (Futuristic office...)` -> 괄호 열고 설명 쓰면 **실패**입니다.
+   - ⭕ 올바른 예시:
+     <h3>섹션 제목</h3>
+     <p>내용...</p>
+     [IMAGE_PLACEHOLDER_1]
 
-**Step 2: 네거티브 필터링 (Negative Filtering)**
-- 다음 유형의 주제를 즉시 폐기하십시오:
-  1. 부업, 돈 벌기, 수익화, 주식 자동매매 (신뢰도 하락 요인)
-  2. 너무 뻔한 기초 사용법 (예: "ChatGPT 가입하는 법")
-  3. 개발자 전용의 너무 어려운 코딩 주제
-  4. **[Existing Articles]와 의미적으로 60% 이상 유사한 주제**
+3. **형식 및 구조:**
+   - HTML 태그만 사용 (<h2>, <h3>, <p>, <ul>, <li>, <strong>, <mark>, <pre>, <br>).
+   - <html>, <body> 태그 제외.
+   - 분량: 공백 포함 1,500자 ~ 2,000자.
 
-**Step 3: 앵글 구체화 (Angle Sharpening)**
-- 선정된 주제를 "2025년 최신 트렌드"와 연결하십시오.
-- 독자가 클릭할 수밖에 없는 '구체적인 효용(Benefit)'을 제목에 담으십시오.
-- 과장된 낚시성 멘트(어그로) 대신, 신뢰감을 주는 숫자를 활용하십시오.
+4. **스타일 박스 (그대로 복사):**
+   - 팁: <p style="border-left:4px solid #3b82f6; background:#f0f9ff; padding:15px; border-radius:4px; margin:15px 0;"><strong>💡 TIP:</strong> 내용</p>
+   - 주의: <p style="border-left:4px solid #ef4444; background:#fef2f2; padding:15px; border-radius:4px; margin:15px 0;"><strong>⚠️ 주의:</strong> 내용</p>
+   - 코드: <pre style="background:#1e293b; color:#e2e8f0; padding:15px; border-radius:8px; white-space:pre-wrap; word-wrap:break-word; line-height:1.6; border:1px solid #334155; margin:15px 0;">코드</pre>
 
-**Step 4: 제목 최적화 (Title SEO)**
-- 제목 길이: 25~35자 이내 (모바일 가독성 최적화).
-- 핵심 키워드는 제목 앞부분에 배치.
-- 형식: [대상] + [도구/방법] + [구체적 결과/숫자]
+---
 
-# Output Format (최종 출력)
-- 부가적인 설명이나 인사말, 따옴표("")를 모두 생략하고, **오직 완성된 제목 1줄만** 출력하시오.
+# [Step-by-Step 실행 지침]
 
-# Example Output
-DeepSeek vs ChatGPT: 2025년 무료 코딩 AI 성능 비교와 실무 활용팁
-"""
+**Step 1: 구조 설계 (Internal Monologue)**
+- 주제를 분석하여 목차를 구성하십시오. (출력하지 않음)
+
+**Step 2: 콘텐츠 작성 (HTML Output)**
+- 위 규칙을 지켜 **완벽한 한국어 블로그 글**을 작성하십시오.
+- **영어 문장이 단 한 문장이라도 본문에 섞이면 안 됩니다.**
+
+**Step 3: 이미지 프롬프트 생성 (List Output)**
+- ⚠️ 글 작성이 완전히 끝난 후, 반드시 `<hr id="image-prompt-separator">` 태그를 넣으십시오.
+- 그 아래에 이미지 생성용 영어 프롬프트 표를 작성하십시오. (이 부분만 유일하게 영어 사용 가능)
+- **형식**:
+| ID | Context | English Prompt for AI Image Generation |
+|:--|:--|:--|
+| [IMAGE_PLACEHOLDER_1] | (메인 주제) | (Cinematic, Detailed, 8k, Description...) |
         
         try:
             topic = self._generate_with_retry(topic_prompt)
@@ -220,8 +231,13 @@ DeepSeek vs ChatGPT: 2025년 무료 코딩 AI 성능 비교와 실무 활용팁
 5. **강조**: 핵심 문장은 <strong> 또는 <mark>로 강조.
 6. **실무 팁 박스 스타일** (반드시 아래 코드 복사):
    <p style="border-left:4px solid #3b82f6; background:#f0f9ff; padding:15px; border-radius:4px; margin:15px 0;"><strong>💡 TIP:</strong> 내용</p>
-7. **주의사항 박스 스타일** (반드시 아래 코드 복사):
-   <p style="border-left:4px solid #ef4444; background:#fef2f2; padding:15px; border-radius:4px; margin:15px 0;"><strong>⚠️ 주의:</strong> 구체적인 위험/비용/제약 사항 내용</p>
+
+7. **⚠️ 주의사항 박스 스타일 (내용 필수 작성 - 누락 엄금)**:
+   - 아래 HTML 코드를 사용하되, **내용 부분에 반드시 주제와 관련된 치명적인 단점, 비용 문제, 보안 이슈, 기술적 한계 등을 구체적으로 작성**하십시오.
+   - **절대 금지**: 내용을 비워두거나, "주의사항을 입력하세요"라는 문구를 그대로 출력하는 행위.
+   - 코드:
+   <p style="border-left:4px solid #ef4444; background:#fef2f2; padding:15px; border-radius:4px; margin:15px 0;"><strong>⚠️ 주의:</strong> (이곳에 반드시 구체적인 경고 내용을 작성할 것)</p>
+
 8. **코드/명령어 박스 스타일** (반드시 아래 코드 복사):
    <pre style="background:#1e293b; color:#e2e8f0; padding:15px; border-radius:8px; white-space:pre-wrap; word-wrap:break-word; line-height:1.6; border:1px solid #334155; margin:15px 0;">코드 내용</pre>
 
@@ -231,10 +247,12 @@ DeepSeek vs ChatGPT: 2025년 무료 코딩 AI 성능 비교와 실무 활용팁
 
 **Step 1: 구조 설계 (Internal Monologue)**
 - 출력하지 말고 혼자 생각하십시오. 주제를 분석하여 가장 논리적인 목차를 구성합니다.
+- **[중요]** 주의사항 박스에 들어갈 '현실적인 위험 요소(Risk Factor)'를 미리 생각하십시오.
 
 **Step 2: 콘텐츠 작성 (HTML Output)**
 - 위 [작성 규칙]에 맞춰 고품질의 HTML 글을 작성하십시오.
 - 스타일(CSS)을 정확하게 적용하십시오.
+- **팁 박스와 주의 박스는 반드시 1회 이상 사용하고, 내용은 절대 비워두지 마십시오.**
 
 **Step 3: 이미지 프롬프트 생성 (List Output)**
 - ⚠️ 글 작성이 끝난 후, 맨 마지막에 `<hr>` 태그로 구분선을 넣고 그 아래에 작성하십시오.
