@@ -1,0 +1,72 @@
+{
+  "title": "[테스트] 직장인 AI 활용법, 업무 효율 3배 향상 비결",
+  "sections": [
+    {
+      "type": "heading",
+      "level": 2,
+      "content": "[테스트] 직장인 AI 활용법, 업무 효율 3배 향상 비결"
+    },
+    {
+      "type": "paragraph",
+      "content": "AI 도구를 활용하면 반복적인 업무를 자동화하여 시간을 절약할 수 있습니다."
+    },
+    {
+      "type": "image",
+      "id": "img_1",
+      "description": "A confident Korean IT professional (age 30-40) sitting in a modern Seoul office with floor-to-ceiling windows showing Namsan Tower in the background, typing on MacBook, natural afternoon lighting, professional photography style, 8k quality",
+      "url": "automation/generated_images/img_1_abc123.png",
+      "audit_status": "PASS",
+      "audit_timestamp": "2025-12-14 13:56:02"
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "content": "AI 도구 활용 방법"
+    },
+    {
+      "type": "paragraph",
+      "content": "다양한 AI 도구를 업무에 적용하는 구체적인 방법을 소개합니다."
+    },
+    {
+      "type": "tip_box",
+      "content": "실무에서는 ChatGPT와 Claude를 조합하여 사용하면 더욱 효과적입니다."
+    },
+    {
+      "type": "image",
+      "id": "img_2",
+      "description": "Korean business team (3-4 people, mixed gender, professional attire) discussing AI strategy around a large monitor displaying Korean text dashboard, modern Gangnam office interior, warm collaborative atmosphere, cinematic wide shot",
+      "url": "automation/generated_images/img_2_abc123.png",
+      "audit_status": "PASS",
+      "audit_timestamp": "2025-12-14 13:56:02"
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "content": "주의사항"
+    },
+    {
+      "type": "warning_box",
+      "content": "무료 플랜은 월 100회로 제한되어 있으니 주의하세요."
+    },
+    {
+      "type": "paragraph",
+      "content": "AI 도구를 활용하여 업무 효율을 극대화하세요."
+    }
+  ],
+  "summary": "AI 도구를 활용한 업무 자동화 방법을 소개합니다. 실전 예시와 주의사항을 통해 효과적으로 적용할 수 있습니다.",
+  "tags": [
+    "AI",
+    "업무자동화",
+    "실전활용"
+  ],
+  "generated_at": "2025-12-14 13:56:02",
+  "validated_at": "2025-12-14 13:56:02",
+  "agent": "step3_image_audit_agent",
+  "stats": {
+    "total_placeholders": 2,
+    "generated": 2,
+    "passed": 2,
+    "failed": 0,
+    "removed": 0
+  }
+}
