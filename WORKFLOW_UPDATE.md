@@ -144,6 +144,26 @@ workflow without `workflows` permission
 
 ## 📞 **문제 해결**
 
+### **Q: 신규 코드에 "fi"가 없는데 괜찮나요?**
+A: ✅ **완전히 괜찮습니다!** 
+- **기존 코드**: `run:` 블록 내부에서 bash `if/fi` 사용 → `fi` 필수
+- **신규 코드**: YAML의 `if:` 속성 사용 → `fi` 불필요
+- 신규 방식이 더 깔끔하고 GitHub Actions 모범 사례입니다
+
+```yaml
+# 기존 (Bash 레벨 조건문)
+run: |
+  if [ "$ENABLE_AI" = "true" ]; then
+    python script.py
+  fi  # ← fi 필수!
+
+# 신규 (YAML 레벨 조건문)
+- name: Step 1
+  if: ${{ condition }}  # ← YAML 조건문
+  run: |
+    python script.py    # ← fi 불필요
+```
+
 ### **Q: 워크플로우가 실행되지 않아요**
 A: Actions 탭이 활성화되어 있는지 확인하세요.
 
