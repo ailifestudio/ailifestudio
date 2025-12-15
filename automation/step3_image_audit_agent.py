@@ -144,14 +144,31 @@ class ImageAuditAgent:
         
         return None, None
     
-    def audit_image_with_vision(self, image_path: str, original_description: str) -> str:
+    def _rotate_key(self):
+        """다음 API 키로 전환"""
+        self.current_key_index = (self.current_key_index + 1) % len(self.api_keys)
+        new_key = self.api_keys[self.current_key_index]
+        genai.configure(api_key=new_key)
+        self.vision_model = genai.GenerativeModel("gemini-2.5-flash")
+        print(f"      🔄 API 키 #{self.current_key_index + 1}로 전환")
+    
+    def audit_image_with_vision(self, image_path: str, original_description: str, max_key_rotations: int = None) -> str:
         """
-        Gemini Vision으로 이미지 품질 검수
+        Gemini Vision으로 이미지 품질 검수 (키 로테이션 지원)
+        
+        Args:
+            image_path: 이미지 파일 경로
+            original_description: 원본 설명
+            max_key_rotations: 최대 키 순환 횟수 (None = 모든 키 시도)
         
         Returns:
             "PASS" or "FAIL"
         """
-        try:
+        if max_key_rotations is None:
+            max_key_rotations = len(self.api_keys)
+        
+        for rotation in range(max_key_rotations):
+            try:
             # 이미지 파일 로드
             with open(image_path, 'rb') as f:
                 image_data = f.read()
@@ -189,26 +206,37 @@ class ImageAuditAgent:
             response = self.vision_model.generate_content([audit_prompt, image_obj])
             result = response.text.strip()
             
-            # 결과 파싱
-            if result.startswith("PASS"):
-                print(f"      ✅ 검수 통과: PASS")
-                return "PASS"
-            else:
-                print(f"      ❌ 검수 실패: {result[:60]}")
-                return result  # "FAIL: ..." 반환
+                # 결과 파싱
+                if result.startswith("PASS"):
+                    print(f"      ✅ 검수 통과: PASS")
+                    return "PASS"
+                else:
+                    print(f"      ❌ 검수 실패: {result[:60]}")
+                    return result  # "FAIL: ..." 반환
+                    
+            except Exception as e:
+                error_msg = str(e)
                 
-        except Exception as e:
-            error_msg = str(e)
-            print(f"      ⚠️ 검수 오류: {error_msg[:100]}")
-            
-            # 할당량 초과(429) 또는 일시적 오류는 PASS 처리 (이미지 유지)
-            if '429' in error_msg or 'quota' in error_msg.lower() or 'rate' in error_msg.lower():
-                print(f"      ℹ️  할당량 초과로 검수 생략, 이미지 유지 (PASS)")
-                return "PASS"
-            else:
-                # 기타 오류도 이미지 유지 (너무 많이 삭제되는 것 방지)
-                print(f"      ℹ️  검수 오류로 자동 통과 (PASS)")
-                return "PASS"
+                # 할당량 초과(429) 에러인 경우
+                if '429' in error_msg or 'quota' in error_msg.lower() or 'rate' in error_msg.lower():
+                    print(f"      ⚠️ API 키 할당량 초과 (Key #{self.current_key_index + 1})")
+                    
+                    # 다음 키로 전환 시도
+                    if rotation < max_key_rotations - 1:
+                        self._rotate_key()
+                        continue
+                    else:
+                        # 모든 키 소진 → 이미지 유지
+                        print(f"      ℹ️  모든 키 할당량 초과, 이미지 유지 (PASS)")
+                        return "PASS"
+                else:
+                    # 기타 오류 → 이미지 유지
+                    print(f"      ⚠️ 검수 오류: {error_msg[:100]}")
+                    print(f"      ℹ️  검수 오류로 자동 통과 (PASS)")
+                    return "PASS"
+        
+        # 여기 도달하면 안 됨
+        return "PASS"
     
     def process_content_with_images(self, content_data: dict) -> dict:
         """

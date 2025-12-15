@@ -52,14 +52,55 @@ class WriterAgent:
         
         return []
     
-    def _generate_with_retry(self, prompt: str) -> str:
-        """API 호출 (재시도 포함)"""
-        try:
-            response = self.model.generate_content(prompt)
-            return response.text
-        except Exception as e:
-            print(f"⚠️ API 호출 실패: {e}")
-            raise
+    def _generate_with_retry(self, prompt: str, max_key_rotations: int = None) -> str:
+        """
+        API 호출 (재시도 + 키 로테이션 포함)
+        
+        Args:
+            prompt: 생성 프롬프트
+            max_key_rotations: 최대 키 순환 횟수 (None = 모든 키 시도)
+        """
+        if max_key_rotations is None:
+            max_key_rotations = len(self.api_keys)
+        
+        last_error = None
+        
+        for rotation in range(max_key_rotations):
+            try:
+                response = self.model.generate_content(prompt)
+                return response.text
+                
+            except Exception as e:
+                error_str = str(e)
+                
+                # 429 Quota 에러인 경우
+                if '429' in error_str or 'quota' in error_str.lower():
+                    print(f"⚠️ API 키 할당량 초과 (Key #{self.current_key_index + 1})")
+                    
+                    # 다음 키로 전환
+                    if rotation < max_key_rotations - 1:
+                        self.current_key_index = (self.current_key_index + 1) % len(self.api_keys)
+                        new_key = self.api_keys[self.current_key_index]
+                        
+                        print(f"🔄 다음 API 키로 전환 중... (Key #{self.current_key_index + 1}/{len(self.api_keys)})")
+                        
+                        # API 재설정
+                        genai.configure(api_key=new_key)
+                        self.model = genai.GenerativeModel("gemini-2.5-flash")
+                        
+                        last_error = e
+                        continue
+                    else:
+                        print(f"❌ 모든 API 키 할당량 초과 ({len(self.api_keys)}개)")
+                        raise
+                else:
+                    # 기타 에러 (네트워크, 타임아웃 등)
+                    print(f"⚠️ API 호출 실패: {e}")
+                    raise
+        
+        # 모든 키 시도 실패
+        if last_error:
+            raise last_error
     
     def load_topic(self, input_path: str = "automation/intermediate_outputs/step1_topic.json") -> dict:
         """Step 1 출력 로드"""
