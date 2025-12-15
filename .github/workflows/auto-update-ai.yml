@@ -7,7 +7,7 @@ on:
   workflow_dispatch:  # 수동 실행 가능
     inputs:
       enable_ai:
-        description: 'AI 콘텐츠 생성 활성화'
+        description: 'AI 콘텐츠 생성 활성화' 
         required: false
         default: 'true'
         type: choice
