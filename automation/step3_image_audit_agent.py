@@ -76,14 +76,14 @@ class ImageAuditAgent:
         
         return data
     
-    def generate_image(self, description: str, image_id: str, max_retries: int = 3) -> tuple:
+    def generate_image(self, description: str, image_id: str, max_retries: int = 5) -> tuple:
         """
         Pollinations.ai로 이미지 생성 (재시도 로직 포함)
         
         Args:
             description: 이미지 설명
             image_id: 이미지 ID
-            max_retries: 최대 재시도 횟수 (기본값: 3)
+            max_retries: 최대 재시도 횟수 (기본값: 5)
         
         Returns:
             (image_path, image_url) 튜플
@@ -151,33 +151,25 @@ class ImageAuditAgent:
             with open(image_path, 'rb') as f:
                 image_data = f.read()
             
-            # Gemini Vision 검수 프롬프트 (완화된 기준)
-            audit_prompt = f"""# Role Definition
-당신은 실용적인 AI 이미지 품질 관리자(QA Auditor)입니다.
+            # Gemini Vision 검수 프롬프트 (매우 관대한 기준)
+            audit_prompt = f"""# Role: 관대한 이미지 품질 관리자
 
-# Input Data
-1. Original Description (요청사항): "{original_description}"
-2. Generated Image (결과물): (첨부된 이미지)
+# Original Request: "{original_description}"
 
-# Audit Tasks
-이미지를 보고 아래 **핵심 기준**만 평가하십시오.
+# Your Task: 
+아래 이미지가 블로그에 사용 가능한지 **단 한 가지**만 확인하세요:
 
-1. ✅ 주제 일치성: 이미지가 Description의 "핵심 주제"를 표현하고 있는가?
-   - 예: "office worker"가 있으면 사무실 환경 + 사람만 있으면 OK
-   - 세부사항(Namsan Tower, cinematic shot 등)은 무시 가능
+**❌ FAIL 조건 (이것만 해당되면 FAIL):**
+- 이미지가 완전히 깨짐 (corrupt file)
+- 또는 요청한 주제와 전혀 무관함 (예: 사무실을 요청했는데 동물)
 
-2. ✅ 치명적 결함 없음: 명백히 사용 불가능한 이미지인가?
-   - 심각한 왜곡, 기형, 깨진 이미지 (약간의 부자연스러움은 OK)
-   - 완전히 관계없는 주제 (예: 자동차를 요청했는데 나무)
+**✅ PASS 조건 (나머지 모든 경우):**
+- 주제가 대략적으로라도 일치하면 PASS
+- 사람, 사무실, 컴퓨터, 회의 등 관련 키워드 중 하나라도 보이면 PASS
+- 품질이 낮아도, 구도가 이상해도, 배경이 달라도 PASS
 
-# Decision Rules (완화됨)
-- 핵심 주제만 맞으면 "PASS" 
-- 치명적 결함이 없으면 "PASS"
-- 두 가지 모두 실패한 경우에만 "FAIL: 이유"
-
-# Important
-- 세부 요구사항(배경, 각도, 텍스트 정확성)은 **무시**하십시오
-- 반드시 "PASS" 또는 "FAIL"로 시작하는 한 줄만 출력하십시오
+# Output:
+- "PASS" 또는 "FAIL: 이유" 한 줄만 출력하세요
 """
             
             print(f"      🔍 Gemini Vision 검수 중...")
