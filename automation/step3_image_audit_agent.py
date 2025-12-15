@@ -89,13 +89,17 @@ class ImageAuditAgent:
             (image_path, image_url) 튜플
         """
         import time
+        import random
         
         for attempt in range(max_retries):
             try:
+                # 랜덤 시드 (캐시 방지 - 매번 새로운 이미지 생성)
+                seed = random.randint(1, 9999999)
+                
                 # URL 인코딩 + 프롬프트 강화 (영뚱한 이미지 방지)
                 enhanced_prompt = f"professional business photography, {description}, office setting, corporate environment, realistic photo, no swimming no sports"
                 encoded_prompt = urllib.parse.quote(enhanced_prompt)
-                pollinations_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=1365&height=768&nologo=true&enhance=true"
+                pollinations_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=1365&height=768&nologo=true&enhance=true&seed={seed}"
                 
                 if attempt == 0:
                     print(f"   🎨 이미지 생성 중: {description[:50]}...")
