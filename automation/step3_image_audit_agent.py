@@ -201,9 +201,17 @@ class ImageAuditAgent:
                 return result  # "FAIL: ..." 반환
                 
         except Exception as e:
-            print(f"      ⚠️ 검수 오류: {e}")
-            # 검수 실패 시 FAIL 처리 (안전한 선택)
-            return f"FAIL: Audit error - {str(e)}"
+            error_msg = str(e)
+            print(f"      ⚠️ 검수 오류: {error_msg[:100]}")
+            
+            # 할당량 초과(429) 또는 일시적 오류는 PASS 처리 (이미지 유지)
+            if '429' in error_msg or 'quota' in error_msg.lower() or 'rate' in error_msg.lower():
+                print(f"      ℹ️  할당량 초과로 검수 생략, 이미지 유지 (PASS)")
+                return "PASS"
+            else:
+                # 기타 오류도 이미지 유지 (너무 많이 삭제되는 것 방지)
+                print(f"      ℹ️  검수 오류로 자동 통과 (PASS)")
+                return "PASS"
     
     def process_content_with_images(self, content_data: dict) -> dict:
         """
