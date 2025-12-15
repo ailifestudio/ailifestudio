@@ -169,12 +169,12 @@ class ImageAuditAgent:
         
         for rotation in range(max_key_rotations):
             try:
-            # 이미지 파일 로드
-            with open(image_path, 'rb') as f:
-                image_data = f.read()
-            
-            # Gemini Vision 검수 프롬프트 (매우 관대한 기준)
-            audit_prompt = f"""# Role: 관대한 이미지 품질 관리자
+                # 이미지 파일 로드
+                with open(image_path, 'rb') as f:
+                    image_data = f.read()
+                
+                # Gemini Vision 검수 프롬프트 (매우 관대한 기준)
+                audit_prompt = f"""# Role: 관대한 이미지 품질 관리자
 
 # Original Request: "{original_description}"
 
@@ -193,19 +193,19 @@ class ImageAuditAgent:
 # Output:
 - "PASS" 또는 "FAIL: 이유" 한 줄만 출력하세요
 """
-            
-            print(f"      🔍 Gemini Vision 검수 중...")
-            
-            # Gemini Vision API 호출
-            # 이미지를 PIL Image로 변환
-            from PIL import Image
-            import io
-            
-            image_obj = Image.open(io.BytesIO(image_data))
-            
-            response = self.vision_model.generate_content([audit_prompt, image_obj])
-            result = response.text.strip()
-            
+                
+                print(f"      🔍 Gemini Vision 검수 중...")
+                
+                # Gemini Vision API 호출
+                # 이미지를 PIL Image로 변환
+                from PIL import Image
+                import io
+                
+                image_obj = Image.open(io.BytesIO(image_data))
+                
+                response = self.vision_model.generate_content([audit_prompt, image_obj])
+                result = response.text.strip()
+                
                 # 결과 파싱
                 if result.startswith("PASS"):
                     print(f"      ✅ 검수 통과: PASS")
