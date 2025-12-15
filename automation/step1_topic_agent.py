@@ -128,8 +128,6 @@ class TopicAgent:
         current_date = datetime.now().strftime('%Y-%m-%d')
         
         topic_prompt = f"""# Role Definition
-topic_prompt = f"""
-# Role Definition
 당신은 대한민국 IT/Tech 트렌드 분석가입니다.
 특히 **'김이솝', '알린', '닥또리', '소소한 AI 입문 노트'** 등 인기 테크 유튜버들이 다루는 **최신 AI 이슈**를 포착하여, 3040 직장인을 위한 실무 가이드로 재가공하는 능력이 탁월합니다.
 
