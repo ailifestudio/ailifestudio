@@ -2,9 +2,8 @@ name: Auto Update Blog with AI
 
 on:
   schedule:
-    # 매일 오전 9시, 오후 3시, 오후 9시 (KST = UTC+9)
-    - cron: '0 0,6,12 * * *'  # UTC 0시, 6시, 12시 = KST 9시, 15시, 21시
-  workflow_dispatch:  # 수동 실행 가능
+    - cron: '0 0,6,12 * * *'
+  workflow_dispatch:
     inputs:
       enable_ai:
         description: 'AI 콘텐츠 생성 활성화' 
@@ -17,8 +16,7 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write   # PR 생성 권한 추가
-
+  pull-requests: write
 
 jobs:
   update-blog:
@@ -61,7 +59,7 @@ jobs:
       env:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         GEMINI_API_KEYS: ${{ secrets.GEMINI_API_KEYS }}
-        HUGGINGFACE_API_TOKEN: ${{ secrets.HUGGINGFACE_API_TOKEN }}  # ⬅️ 이 줄 추가!
+        HUGGINGFACE_API_TOKEN: ${{ secrets.HUGGINGFACE_API_TOKEN }}
       run: |
         echo "🎨 Step 3: 이미지 생성 및 Gemini Vision 검수 중..."
         python automation/step3_image_audit_agent.py
@@ -72,12 +70,11 @@ jobs:
         echo "💾 Step 4: data.json 및 Markdown 파일 생성 중..."
         python automation/step4_save_to_data_json.py
         
-    - name: 🔨 블로그 빌드 (Markdown → HTML)
+    - name: 🔨 블로그 빌드
       run: |
         echo "🔨 build_blog.py 실행 중..."
         python automation/build_blog.py
         echo "✅ 블로그 빌드 완료"
-        
     
     - name: 📊 data.json 이동
       run: |
@@ -89,69 +86,59 @@ jobs:
           exit 1
         fi
         
-        - name: 📋 검수용 PR 생성
+    - name: 📋 검수용 PR 생성
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        # 변경사항 확인
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
         
         git add data.json data/ feed/ contents/ automation/generated_images/ automation/intermediate_outputs/
         
         if ! git diff --staged --quiet; then
-          # 브랜치명 생성 (날짜 기반)
           BRANCH_NAME="ai-review-$(date +'%Y%m%d-%H%M%S')"
-          
-          # 주제 추출
           TOPIC=$(cat automation/intermediate_outputs/step1_topic.json | jq -r '.title' || echo "AI 생성 포스트")
           
-          # 새 브랜치 생성 및 이동
           git checkout -b $BRANCH_NAME
-          
-          # 커밋
           git commit -m "🤖 [검수 요청] $TOPIC"
-          
-          # 푸시
           git push origin $BRANCH_NAME
           
-          # PR 생성
-          gh pr create \
-            --title "🤖 [검수 요청] $TOPIC" \
-            --body "## 📝 AI가 새로운 포스팅을 작성했습니다
+          cat > /tmp/pr_body.md << 'EOF'
+## 📝 AI가 새로운 포스팅을 작성했습니다
 
-**제목:** $TOPIC
-
-**작성 시각:** $(date +'%Y-%m-%d %H:%M')
+**작성 시각:** 자동 생성
 
 ---
 
-### ✅ 검수 체크리스트 
+### ✅ 검수 체크리스트
 - [ ] 이미지 확인 (automation/generated_images/)
-- [ ] 이미지가 주제와 맞는지 (수영/스포츠 이미지 X)
+- [ ] 이미지가 주제와 맞는지 확인
 - [ ] 내용 확인 (contents/*.md)
 - [ ] 오타 및 문법 확인
 
 ### 📌 다음 단계
-1. **승인:** [Merge pull request] 클릭 → 블로그 자동 배포
-2. **수정:** Files changed 탭에서 파일 수정
-3. **거부:** Close pull request → 글 폐기
+1. **승인:** Merge pull request 버튼 클릭
+2. **수정:** Files changed 탭에서 수정
+3. **거부:** Close pull request
 
 ### 🔧 문제 발견 시
-- **이미지 이상:** PR 닫고 워크플로우 재실행 (랜덤 시드로 다른 이미지 생성)
-- **내용 수정:** Files changed → 연필 아이콘으로 직접 수정
+- 이미지 이상: PR 닫고 재실행
+- 내용 수정: Files changed에서 수정
 
 ---
 
-**미리보기:**
-- Files changed 탭에서 이미지 클릭하면 미리볼 수 있습니다" \
+미리보기: Files changed 탭에서 이미지 클릭
+EOF
+          
+          gh pr create \
+            --title "🤖 [검수 요청] $TOPIC" \
+            --body-file /tmp/pr_body.md \
             --base main \
             --head $BRANCH_NAME \
             --label "ai-generated,needs-review"
           
           echo "✅ PR 생성 완료: $BRANCH_NAME"
-          echo "📱 모바일/PC에서 GitHub 알림을 확인하세요!"
+          echo "📱 모바일에서 GitHub 알림 확인하세요!"
         else
-          echo "ℹ️ 변경사항 없음 (PR 생성 안 함)"
+          echo "ℹ️ 변경사항 없음"
         fi
-
