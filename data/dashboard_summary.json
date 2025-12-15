@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2025-12-15 12:03",
-  "total": 5,
+  "updatedAt": "2025-12-15 12:09",
+  "total": 6,
   "articles": [
     {
       "title": "Claude 3.5 Artifacts: 아이디어부터 최종보고서까지, 대화하듯 끝내는 비법",
@@ -36,6 +36,18 @@
       "category": "AI/테크",
       "type": "markdown",
       "slug": "2025-12-15-110632-ai-article",
+      "canonical_url": ""
+    },
+    {
+      "title": "보고서 다이어그램, Napkin AI로 3분 만에 끝내는 실무 비법",
+      "source": "AI/테크",
+      "time": "오늘",
+      "summary": "",
+      "link": "/article.html?slug=2025-12-15-120903-ai-article",
+      "image": "https://picsum.photos/seed/ai-tech/1280/720",
+      "category": "AI/테크",
+      "type": "markdown",
+      "slug": "2025-12-15-120903-ai-article",
       "canonical_url": ""
     },
     {
