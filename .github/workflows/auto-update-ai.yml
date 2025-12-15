@@ -92,8 +92,8 @@ jobs:
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
         
-        # AI 생성 Markdown, data.json, data/, feed/, contents/ 모두 추가
-        git add data.json data/ feed/ contents/
+        # AI 생성 Markdown, data.json, data/, feed/, contents/, 이미지 모두 추가
+        git add data.json data/ feed/ contents/ automation/generated_images/ automation/intermediate_outputs/
         
         # 변경사항이 있을 때만 커밋
         if ! git diff --staged --quiet; then
