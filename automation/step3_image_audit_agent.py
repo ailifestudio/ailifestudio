@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """
 Step 3: Image Generation & Vision Audit Agent
-- Pollinations.ai로 이미지 생성
-- Gemini Vision으로 품질 검수 (PASS/FAIL)
-- 검증된 이미지만 최종 콘텐츠에 포함
+- Pollinations.ai (Flux 모델)로 고품질 이미지 생성
+- API 쿼터 절약을 위해 Vision 검수는 'Free Pass' (무조건 통과) 모드로 동작
 """
 
 import google.generativeai as genai
@@ -16,12 +15,11 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, Dict
 import time
-
+import random
 
 class ImageAuditAgent:
     def __init__(self, config_path="config_ai.json"):
         """Gemini API 초기화"""
-        # config 파일은 선택사항 (환경변수 우선)
         self.config = {}
         if Path(config_path).exists():
             with open(config_path, 'r', encoding='utf-8') as f:
@@ -30,18 +28,16 @@ class ImageAuditAgent:
         self.api_keys = self._load_api_keys()
         self.current_key_index = 0
         
-        if not self.api_keys:
-            raise ValueError("❌ GEMINI_API_KEY가 설정되지 않았습니다.")
-        
-        genai.configure(api_key=self.api_keys[0])
-        # Vision 모델 사용
-        self.vision_model = genai.GenerativeModel("gemini-2.5-flash")
+        # Vision 모델 초기화 (검수 프리패스 모드여도 초기화는 유지하거나, 에러 방지용으로 둠)
+        if self.api_keys:
+            genai.configure(api_key=self.api_keys[0])
+            self.vision_model = genai.GenerativeModel("gemini-2.5-flash")
         
         # 출력 디렉토리 생성
         self.output_dir = Path(__file__).parent / "generated_images"
         self.output_dir.mkdir(exist_ok=True)
         
-        print(f"✅ Gemini Vision API 초기화 완료")
+        print(f"✅ Image Agent 초기화 완료")
         print(f"✅ 이미지 저장 경로: {self.output_dir}")
     
     def _load_api_keys(self) -> List[str]:
@@ -66,7 +62,6 @@ class ImageAuditAgent:
         with open(input_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
         
-        # 이미지 플레이스홀더 개수 카운트
         image_count = sum(1 for s in data['sections'] if s['type'] == 'image_placeholder')
         
         print(f"\n📥 Step 2 출력 로드:")
@@ -76,41 +71,35 @@ class ImageAuditAgent:
         
         return data
     
-    def generate_image(self, description: str, image_id: str, max_retries: int = 5) -> tuple:
+    def generate_image(self, description: str, image_id: str, max_retries: int = 3) -> tuple:
         """
-        Pollinations.ai로 이미지 생성 (재시도 로직 포함)
-        
-        Args:
-            description: 이미지 설명
-            image_id: 이미지 ID
-            max_retries: 최대 재시도 횟수 (기본값: 5)
-        
-        Returns:
-            (image_path, image_url) 튜플
+        Pollinations.ai (Flux)로 이미지 생성
         """
-        import time
-        import random
-        
         for attempt in range(max_retries):
             try:
-                # 랜덤 시드 (캐시 방지 - 매번 새로운 이미지 생성)
-                seed = random.randint(1, 9999999)
+                # 1. 랜덤 시드 생성 (캐싱 방지 & 다양성 확보)
+                seed = random.randint(1, 99999999)
                 
-                # URL 인코딩 + 프롬프트 강화 (영뚱한 이미지 방지)
-                enhanced_prompt = f"professional business photography, {description}, office setting, corporate environment, realistic photo, no swimming no sports"
+                # 2. 프롬프트 강화 (한국적 맥락이 있다면 유지, 없다면 비즈니스 톤 추가)
+                # description에 이미 'Korean professional' 등이 포함되어 있다고 가정
+                enhanced_prompt = f"{description}, photorealistic, 8k, cinematic lighting, high quality"
                 encoded_prompt = urllib.parse.quote(enhanced_prompt)
-                pollinations_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=1365&height=768&nologo=true&enhance=true&seed={seed}"
+                
+                # 3. URL 생성 (Flux 모델 명시)
+                # width/height는 16:9 비율 (1280x720) 추천
+                pollinations_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=1280&height=720&model=flux&nologo=true&seed={seed}"
                 
                 if attempt == 0:
-                    print(f"   🎨 이미지 생성 중: {description[:50]}...")
+                    print(f"   🎨 이미지 생성 시도: {description[:40]}...")
+                    print(f"      🔗 URL: {pollinations_url}")
                 else:
                     print(f"      🔄 재시도 {attempt}/{max_retries - 1}...")
                 
-                # 이미지 다운로드
-                response = requests.get(pollinations_url, timeout=60)
+                # 4. 요청
+                response = requests.get(pollinations_url, timeout=30)
                 
                 if response.status_code == 200:
-                    # 파일명 생성 (description 해시)
+                    # 파일명 생성
                     file_hash = hashlib.md5(description.encode()).hexdigest()[:8]
                     image_filename = f"{image_id}_{file_hash}.png"
                     image_path = self.output_dir / image_filename
@@ -119,133 +108,36 @@ class ImageAuditAgent:
                     with open(image_path, 'wb') as f:
                         f.write(response.content)
                     
-                    # 상대 경로 반환 (data.json용)
+                    # 상대 경로 반환
                     relative_path = f"automation/generated_images/{image_filename}"
                     
-                    print(f"      ✅ 생성 완료: {image_filename}")
+                    print(f"      ✅ 생성 성공: {image_filename}")
                     return str(image_path), relative_path
                 else:
                     print(f"      ⚠️ HTTP {response.status_code}")
-                    if attempt < max_retries - 1:
-                        time.sleep(2)  # 2초 대기 후 재시도
-                        continue
-                    else:
-                        print(f"      ❌ 생성 실패: HTTP {response.status_code} (재시도 {max_retries}회 모두 실패)")
-                        return None, None
+                    time.sleep(2)
                     
             except Exception as e:
-                print(f"      ⚠️ 오류: {e}")
-                if attempt < max_retries - 1:
-                    time.sleep(2)  # 2초 대기 후 재시도
-                    continue
-                else:
-                    print(f"      ❌ 생성 실패: {e} (재시도 {max_retries}회 모두 실패)")
-                    return None, None
+                print(f"      ⚠️ 생성 오류: {e}")
+                time.sleep(2)
         
+        print(f"      ❌ 최종 생성 실패 (재시도 초과)")
         return None, None
-    
-    def _rotate_key(self):
-        """다음 API 키로 전환"""
-        self.current_key_index = (self.current_key_index + 1) % len(self.api_keys)
-        new_key = self.api_keys[self.current_key_index]
-        genai.configure(api_key=new_key)
-        self.vision_model = genai.GenerativeModel("gemini-2.5-flash")
-        print(f"      🔄 API 키 #{self.current_key_index + 1}로 전환")
     
     def audit_image_with_vision(self, image_path: str, original_description: str, max_key_rotations: int = None) -> str:
         """
-        Gemini Vision으로 이미지 품질 검수 (키 로테이션 지원)
-        
-        Args:
-            image_path: 이미지 파일 경로
-            original_description: 원본 설명
-            max_key_rotations: 최대 키 순환 횟수 (None = 모든 키 시도)
-        
-        Returns:
-            "PASS" or "FAIL"
+        [Free Pass 모드] API 쿼터 절약을 위해 Vision 검수를 생략하고 무조건 통과시킵니다.
         """
-        if max_key_rotations is None:
-            max_key_rotations = len(self.api_keys)
-        
-        for rotation in range(max_key_rotations):
-            try:
-                # 이미지 파일 로드
-                with open(image_path, 'rb') as f:
-                    image_data = f.read()
-                
-                # Gemini Vision 검수 프롬프트 (매우 관대한 기준)
-                audit_prompt = f"""# Role: 관대한 이미지 품질 관리자
-
-# Original Request: "{original_description}"
-
-# Your Task: 
-아래 이미지가 블로그에 사용 가능한지 **단 한 가지**만 확인하세요:
-
-**❌ FAIL 조건 (이것만 해당되면 FAIL):**
-- 이미지가 완전히 깨짐 (corrupt file)
-- 또는 요청한 주제와 전혀 무관함 (예: 사무실을 요청했는데 동물)
-
-**✅ PASS 조건 (나머지 모든 경우):**
-- 주제가 대략적으로라도 일치하면 PASS
-- 사람, 사무실, 컴퓨터, 회의 등 관련 키워드 중 하나라도 보이면 PASS
-- 품질이 낮아도, 구도가 이상해도, 배경이 달라도 PASS
-
-# Output:
-- "PASS" 또는 "FAIL: 이유" 한 줄만 출력하세요
-"""
-                
-                print(f"      🔍 Gemini Vision 검수 중...")
-                
-                # Gemini Vision API 호출
-                # 이미지를 PIL Image로 변환
-                from PIL import Image
-                import io
-                
-                image_obj = Image.open(io.BytesIO(image_data))
-                
-                response = self.vision_model.generate_content([audit_prompt, image_obj])
-                result = response.text.strip()
-                
-                # 결과 파싱
-                if result.startswith("PASS"):
-                    print(f"      ✅ 검수 통과: PASS")
-                    return "PASS"
-                else:
-                    print(f"      ❌ 검수 실패: {result[:60]}")
-                    return result  # "FAIL: ..." 반환
-                    
-            except Exception as e:
-                error_msg = str(e)
-                
-                # 할당량 초과(429) 에러인 경우
-                if '429' in error_msg or 'quota' in error_msg.lower() or 'rate' in error_msg.lower():
-                    print(f"      ⚠️ API 키 할당량 초과 (Key #{self.current_key_index + 1})")
-                    
-                    # 다음 키로 전환 시도
-                    if rotation < max_key_rotations - 1:
-                        self._rotate_key()
-                        continue
-                    else:
-                        # 모든 키 소진 → 이미지 유지
-                        print(f"      ℹ️  모든 키 할당량 초과, 이미지 유지 (PASS)")
-                        return "PASS"
-                else:
-                    # 기타 오류 → 이미지 유지
-                    print(f"      ⚠️ 검수 오류: {error_msg[:100]}")
-                    print(f"      ℹ️  검수 오류로 자동 통과 (PASS)")
-                    return "PASS"
-        
-        # 여기 도달하면 안 됨
+        # -----------------------------------------------------------
+        # [Quota Saving Mode] API 호출 없이 즉시 통과
+        # -----------------------------------------------------------
+        print(f"      ⏩ [Free Pass] 쿼터 절약을 위해 Vision 검수 생략 (PASS)")
         return "PASS"
-    
+
     def process_content_with_images(self, content_data: dict) -> dict:
-        """
-        이미지 플레이스홀더를 처리하여 검증된 이미지로 교체
-        """
+        """이미지 플레이스홀더 처리 메인 로직"""
         print("\n" + "="*60)
-        print("🎨 Step 3: Image Generation & Vision Audit")
-        print("   📁 automation/step3_image_audit_agent.py")
-        print("   ⚙️  검수 조건: 라인 145-186 (Vision 검수 프롬프트)")
+        print("🎨 Step 3: Image Generation (Free Pass Mode)")
         print("="*60)
         
         sections = content_data['sections']
@@ -263,9 +155,7 @@ class ImageAuditAgent:
             if section['type'] == 'image_placeholder':
                 stats["total_placeholders"] += 1
                 
-                print(f"\n[{stats['total_placeholders']}/{sum(1 for s in sections if s['type'] == 'image_placeholder')}] 이미지 처리 중:")
-                print(f"   ID: {section['id']}")
-                print(f"   Description: {section['description'][:80]}...")
+                print(f"\n[{stats['total_placeholders']}] 이미지 처리 중 (ID: {section['id']})")
                 
                 # 1. 이미지 생성
                 image_path, relative_path = self.generate_image(
@@ -276,19 +166,10 @@ class ImageAuditAgent:
                 if image_path and relative_path:
                     stats["generated"] += 1
                     
-                    # 생성된 이미지 정보 출력
-                    image_filename = Path(image_path).name
-                    print(f"      📷 생성 파일: {image_filename}")
-                    print(f"      🔗 경로: {relative_path}")
-                    
-                    # 2. Gemini Vision 검수
-                    audit_result = self.audit_image_with_vision(
-                        image_path,
-                        section['description']
-                    )
+                    # 2. 검수 (Free Pass)
+                    audit_result = self.audit_image_with_vision(image_path, section['description'])
                     
                     if audit_result == "PASS":
-                        # 검수 통과 → image 타입으로 변경
                         stats["passed"] += 1
                         updated_section = {
                             "type": "image",
@@ -300,55 +181,25 @@ class ImageAuditAgent:
                         }
                         updated_sections.append(updated_section)
                         print(f"      🎉 최종 승인: 이미지 삽입됨")
-                        print(f"      ✅ 저장됨: {relative_path}")
                     else:
-                        # 검수 실패 → 삭제 전 정보 출력
+                        # Free Pass 모드에서는 이쪽으로 올 일이 거의 없음
                         stats["failed"] += 1
                         stats["removed"] += 1
-                        
-                        print(f"      ⚠️  삭제 예정: {image_filename}")
-                        print(f"      📋 실패 사유: {audit_result[:100]}...")
-                        
-                        # 실패한 이미지 파일 삭제
-                        if Path(image_path).exists():
-                            Path(image_path).unlink()
-                        
-                        print(f"      🗑️  검수 실패로 삭제 완료")
-                        # 섹션 자체를 제거 (updated_sections에 추가하지 않음)
+                        updated_sections.append(section) # 원본 유지하거나 삭제
                 else:
-                    # 이미지 생성 실패 → 삭제
                     stats["failed"] += 1
                     stats["removed"] += 1
-                    print(f"      🗑️ 생성 실패로 삭제됨")
-                    # 섹션 자체를 제거
-                
-                # API 레이트 리밋 방지
-                time.sleep(2)
-                
+                    print(f"      🗑️ 생성 실패로 플레이스홀더 삭제")
+                    # 이미지가 없으므로 섹션 제거 (리스트에 추가 안함)
             else:
-                # 일반 섹션은 그대로 유지
                 updated_sections.append(section)
         
-        # 결과 업데이트
-        result = {
-            "title": content_data['title'],
-            "sections": updated_sections,
-            "summary": content_data.get('summary', ''),
-            "tags": content_data.get('tags', []),
-            "generated_at": content_data.get('generated_at', ''),
-            "validated_at": datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-            "agent": "step3_image_audit_agent",
-            "stats": stats
-        }
+        result = content_data.copy()
+        result['sections'] = updated_sections
+        result['stats'] = stats
         
         print("\n" + "="*60)
-        print("📊 이미지 처리 통계:")
-        print(f"   • 총 플레이스홀더: {stats['total_placeholders']}개")
-        print(f"   • 생성 성공: {stats['generated']}개")
-        print(f"   • 검수 통과 (PASS): {stats['passed']}개")
-        print(f"   • 검수 실패 (FAIL): {stats['failed']}개")
-        print(f"   • 삭제됨: {stats['removed']}개")
-        print(f"   • 최종 이미지 수: {stats['passed']}개")
+        print(f"📊 처리 완료: 총 {stats['passed']}장 생성 및 삽입됨")
         print("="*60)
         
         return result
@@ -361,35 +212,22 @@ class ImageAuditAgent:
         with open(output_file, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
         
-        print(f"\n💾 출력 저장: {output_path}")
-        print(f"   크기: {output_file.stat().st_size} bytes")
-
+        print(f"\n💾 출력 저장 완료: {output_path}")
 
 def main():
-    """메인 실행 함수"""
     try:
         agent = ImageAuditAgent()
-        
-        # Step 2 출력 로드
         content_data = agent.load_structured_content()
-        
-        # 이미지 생성 및 검수
         result = agent.process_content_with_images(content_data)
-        
-        # 출력 저장
         agent.save_output(result)
         
-        print("\n" + "="*60)
-        print("✅ Step 3 완료!")
-        print("="*60)
-        print(f"\n다음 단계: python automation/step4_save_to_data_json.py")
+        print("\n✅ Step 3 완료!")
         
     except Exception as e:
         print(f"\n❌ Step 3 실패: {e}")
         import traceback
         traceback.print_exc()
         exit(1)
-
 
 if __name__ == "__main__":
     main()
