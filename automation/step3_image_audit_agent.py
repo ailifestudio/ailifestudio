@@ -73,53 +73,61 @@ class ImageAuditAgent:
     
     def generate_image(self, description: str, image_id: str, max_retries: int = 3) -> tuple:
         """
-        Pollinations.ai (Flux)로 이미지 생성
+        Pollinations.ai (Flux)로 초고화질 이미지 생성
+        - 타임아웃 60초로 증가 (에러 방지)
+        - 화질 부스터 & enhance=false 적용 (S급 퀄리티)
         """
         for attempt in range(max_retries):
             try:
-                # 1. 랜덤 시드 생성 (캐싱 방지 & 다양성 확보)
+                # 1. 랜덤 시드 (다양성 확보)
                 seed = random.randint(1, 99999999)
                 
-                # 2. 프롬프트 강화 (한국적 맥락이 있다면 유지, 없다면 비즈니스 톤 추가)
-                # description에 이미 'Korean professional' 등이 포함되어 있다고 가정
-                enhanced_prompt = f"{description}, photorealistic, 8k, cinematic lighting, high quality"
-                encoded_prompt = urllib.parse.quote(enhanced_prompt)
+                # 2. 💎 화질 부스터 (퀄리티 강제 주입)
+                # 이 키워드들이 들어가야 AI가 '진짜 사진'처럼 그립니다.
+                quality_prefix = "Masterpiece, award winning photography, 8k resolution, highly detailed, cinematic lighting, depth of field, f/1.8, bokeh, realistic texture, raw photo,"
+                negative_prompt = "blurry, distorted, low quality, cartoon, illustration, bad hands, ugly, text, watermark, grainy"
                 
-                # 3. URL 생성 (Flux 모델 명시)
-                # width/height는 16:9 비율 (1280x720) 추천
-                pollinations_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=1280&height=720&model=flux&nologo=true&seed={seed}"
+                # 프롬프트 합체
+                full_prompt = f"{quality_prefix} {description}, {negative_prompt}"
+                encoded_prompt = urllib.parse.quote(full_prompt)
+                
+                # 3. URL 생성 (Flux 모델 고정)
+                # enhance=false로 설정 (Flux는 원본이 더 리얼함, enhance 켜면 오히려 그림 같아짐)
+                pollinations_url = f"https://image.pollinations.ai/prompt/{encoded_prompt}?width=1280&height=720&model=flux&nologo=true&seed={seed}&enhance=false"
                 
                 if attempt == 0:
-                    print(f"   🎨 이미지 생성 시도: {description[:40]}...")
-                    print(f"      🔗 URL: {pollinations_url}")
+                    print(f"   🎨 [Flux] 고화질 생성 시도 ({attempt+1}/{max_retries}): {description[:30]}...")
+                    # print(f"      🔗 URL: {pollinations_url}") # 로그가 너무 길면 주석 처리
                 else:
-                    print(f"      🔄 재시도 {attempt}/{max_retries - 1}...")
+                    print(f"      🔄 재시도 {attempt+1}/{max_retries}...")
                 
-                # 4. 요청
-                response = requests.get(pollinations_url, timeout=30)
+                # 4. 요청 (핵심: timeout을 30초 -> 60초로 변경)
+                # Flux 모델은 느리기 때문에 최소 60초는 기다려줘야 합니다.
+                response = requests.get(pollinations_url, timeout=60)
                 
                 if response.status_code == 200:
-                    # 파일명 생성
+                    # 파일 저장
                     file_hash = hashlib.md5(description.encode()).hexdigest()[:8]
                     image_filename = f"{image_id}_{file_hash}.png"
                     image_path = self.output_dir / image_filename
                     
-                    # 저장
                     with open(image_path, 'wb') as f:
                         f.write(response.content)
                     
-                    # 상대 경로 반환
                     relative_path = f"automation/generated_images/{image_filename}"
-                    
                     print(f"      ✅ 생성 성공: {image_filename}")
                     return str(image_path), relative_path
                 else:
                     print(f"      ⚠️ HTTP {response.status_code}")
-                    time.sleep(2)
+                    time.sleep(5) # 실패 시 5초 휴식 후 재시도
                     
             except Exception as e:
-                print(f"      ⚠️ 생성 오류: {e}")
-                time.sleep(2)
+                # 타임아웃 메시지가 나오면 시간을 더 늘리라고 안내 (로그 확인용)
+                if "Read timed out" in str(e):
+                    print(f"      ⏳ 시간 초과 (서버가 바쁨 - 재시도합니다)")
+                else:
+                    print(f"      ⚠️ 오류: {e}")
+                time.sleep(5)
         
         print(f"      ❌ 최종 생성 실패 (재시도 초과)")
         return None, None
