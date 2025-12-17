@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 """
-Step 2: Writer & Art Director Agent (Failover System)
-- 1순위: gemini-1.5-flash (쿼터 넉넉)
-- 2순위: gemini-pro (안정성 백업)
-- 자동 모델 전환 및 키 로테이션 기능 탑재
+Step 2: Writer & Art Director Agent (Failover System V2)
+- 전략: 2.0 Flash (메인) -> 실패 시 2.0 Flash Lite (구원투수)
+- 로그에서 확인된 '실제 존재하는 모델명'만 사용
 """
 
 import google.generativeai as genai
@@ -30,8 +29,13 @@ class WriterAgent:
             raise ValueError("❌ GEMINI_API_KEY가 설정되지 않았습니다.")
         
         genai.configure(api_key=self.api_keys[0])
-        # [1순위 모델] 쿼터가 가장 넉넉한 1.5 Flash
-        self.current_model_name = "gemini-1.5-flash"
+        
+        # [1순위] 메인 모델 (2.0 Flash)
+        self.primary_model = "gemini-2.0-flash"
+        # [2순위] 백업 모델 (2.0 Flash Lite - 쿼터 널널함)
+        self.backup_model = "gemini-2.0-flash-lite-preview-02-05"
+        
+        self.current_model_name = self.primary_model
         self.model = genai.GenerativeModel(self.current_model_name)
     
     def _load_api_keys(self) -> List[str]:
@@ -47,45 +51,44 @@ class WriterAgent:
     
     def _generate_with_retry(self, prompt: str, max_key_rotations: int = None) -> str:
         if max_key_rotations is None:
-            max_key_rotations = len(self.api_keys) * 2 # 모델 교체까지 고려해서 시도 횟수 늘림
+            max_key_rotations = len(self.api_keys) * 3 # 모델 2개 교체 + 키 로테이션 고려
         
         for attempt in range(max_key_rotations):
             try:
-                print(f"   🤖 시도 모델: {self.current_model_name} (Key #{self.current_key_index + 1})")
+                print(f"   🤖 시도: {self.current_model_name} (Key #{self.current_key_index + 1})")
                 response = self.model.generate_content(prompt)
                 return response.text
             except Exception as e:
                 error_str = str(e)
                 
-                # 429 (쿼터 초과) 또는 404 (모델 없음) 발생 시
-                if '429' in error_str or 'quota' in error_str.lower() or '404' in error_str:
-                     print(f"   ⚠️ 오류 발생: {error_str.split('message')[0][:100]}...")
+                # 429(쿼터) or 404(모델없음) or 500(서버오류) 발생 시
+                if any(x in error_str.lower() for x in ['429', 'quota', '404', 'not found', '500', '503']):
+                     print(f"   ⚠️ 오류: {error_str.split('message')[0][:80]}...")
                      
-                     # 1. 모델이 1.5-flash였다면 -> gemini-pro로 교체해본다
-                     if self.current_model_name == "gemini-1.5-flash":
-                         print(f"   🔄 모델 전환: 1.5-flash -> gemini-pro (안정성 백업)")
-                         self.current_model_name = "gemini-pro"
+                     # 1. 현재 메인 모델이었다면 -> 백업(Lite) 모델로 교체
+                     if self.current_model_name == self.primary_model:
+                         print(f"   🔄 전환: Flash(쿼터부족/에러) -> Lite(백업)으로 변경")
+                         self.current_model_name = self.backup_model
                          self.model = genai.GenerativeModel(self.current_model_name)
                          time.sleep(2)
                          continue
                      
-                     # 2. 이미 gemini-pro였거나 둘 다 실패하면 -> 다음 키로 교체
+                     # 2. 이미 백업 모델이었거나 둘 다 실패하면 -> 다음 키로 교체
                      else:
                         if self.current_key_index < len(self.api_keys) - 1:
                             self.current_key_index += 1
-                            print(f"   🔑 키 전환: Key #{self.current_key_index + 1}로 변경")
+                            print(f"   🔑 키 변경: Key #{self.current_key_index + 1}로 이동 (모델 초기화)")
                             genai.configure(api_key=self.api_keys[self.current_key_index])
-                            # 새 키에서는 다시 1.5-flash부터 시도
-                            self.current_model_name = "gemini-1.5-flash"
+                            # 새 키에서는 다시 메인 모델부터 시도
+                            self.current_model_name = self.primary_model
                             self.model = genai.GenerativeModel(self.current_model_name)
                             time.sleep(2)
                             continue
                         else:
-                            print("❌ 모든 키와 모델을 시도했으나 실패했습니다.")
+                            print("❌ 모든 키와 모델(Main/Backup)을 다 썼으나 실패했습니다.")
                             raise e
                 
-                # 기타 에러
-                print(f"⚠️ API 호출 실패: {e} (5초 대기)")
+                print(f"⚠️ 기타 오류: {e} (5초 대기)")
                 time.sleep(5)
                 
                 if attempt == max_key_rotations - 1:
@@ -97,8 +100,8 @@ class WriterAgent:
     
     def generate_structured_content(self, topic: str) -> dict:
         print("\n" + "="*60)
-        print("📝 Step 2: Writer Agent (Failover System)")
-        print("   ⚙️  전략: 1.5 Flash -> 실패시 Gemini Pro 자동 전환")
+        print("📝 Step 2: Writer Agent (Failover V2)")
+        print("   ⚙️  전략: 2.0 Flash -> 2.0 Flash Lite (쿼터 회피)")
         print("   ⚙️  설정: 코딩 금지 + 이미지 묘사 이중화")
         print("="*60)
         
@@ -117,51 +120,43 @@ class WriterAgent:
 
 # Writing Rules (매우 중요)
 1. **쉬운 용어:** 전문 용어는 피하거나 쉽게 풀어서 설명하세요.
-2. **코딩 금지:** Python, API, JSON 등 프로그래밍 코드는 **절대 작성하지 마십시오.** (독자가 도망갑니다!)
+2. **코딩 금지:** Python, API, JSON 등 프로그래밍 코드는 **절대 작성하지 마십시오.**
 3. **실전 활용:** 이론보다는 "당장 내일 써먹을 수 있는 방법"을 알려주세요.
 
 # ★ 'code_block' 작성 규칙 (엄격 준수):
 `code_block`에는 프로그래밍 코드 대신, **독자가 AI 채팅창에 복사해서 붙여넣을 수 있는 '한글 지시문(Prompt)'**을 넣으세요.
-- ❌ Bad (작성 금지): `import requests`, `print("Hello")`, `API_KEY = ...`
-- ⭕ Good (작성 권장): 
-  "2024년 전기차 시장 트렌드를 요약해주고, 주요 경쟁사 3곳의 장단점을 표로 정리해줘."
-  "신규 입사자를 위한 온보딩 매뉴얼 목차를 짜줘. 톤앤매너는 친절하고 격려하는 느낌으로."
+- ❌ Bad (작성 금지): `import requests`, `print("Hello")`
+- ⭕ Good (작성 권장): "신규 입사자를 위한 온보딩 매뉴얼 목차를 짜줘."
 
 # ★ [매우 중요] Image Art Directing Rules (Flux Model Optimized)
 이미지 퀄리티를 높이기 위해 `description`을 **최대한 길고, 구체적이고, 묘사적으로(Descriptive)** 작성하세요.
 
 1. **`description` (영어 - 생성용)**:
-   - ❌ Bad: "Korean man working" (너무 짧음 -> 기괴한 이미지 원인)
-   - ⭕ **Good:** "A high-quality cinematic shot of a handsome Korean male professional in his 30s, wearing a smart casual navy blazer, sitting at a clean wooden desk in a modern Seoul office with floor-to-ceiling windows. Warm afternoon sunlight hits his face, serious and focused expression, typing on a sleek silver laptop. Depth of field, 8k resolution, photorealistic, soft lighting."
-   - **필수 요소:** 주체(한국인), 복장, 장소(배경), 조명(Cinematic/Soft), 구도, 표정, 분위기를 50단어 이상 영어 문장으로 서술하세요.
-
+   - 50단어 이상의 영어 문장. 조명, 구도, 인물 묘사, 8k, photorealistic 키워드 포함.
 2. **`description_ko` (한글 - 관리용)**:
-   - 관리자 참고용이므로, 위 영어 내용을 간단하게 요약해서 한글로 적으세요.
-   - 예: "채광 좋은 현대적 사무실에서 집중하여 일하는 30대 한국인 남성 전문가"
+   - 위 내용을 요약한 한글 설명.
 
 # JSON Structure
 {{
   "sections": [
     {{"type": "heading", "level": 2, "content": "제목"}},
-    {{"type": "paragraph", "content": "서론 (공감 형성)"}},
+    {{"type": "paragraph", "content": "서론..."}},
     {{
       "type": "image_placeholder", 
       "id": "img_1", 
-      "description": "Very long and detailed English description for AI image generation...", 
-      "description_ko": "관리자 참고용 한글 요약 설명...",
+      "description": "Very long and detailed English description...", 
+      "description_ko": "관리자 참고용 한글 설명...",
       "position": "after_intro"
     }},
-    {{"type": "heading", "level": 3, "content": "섹션 1: 왜 필요한가?"}},
+    {{"type": "heading", "level": 3, "content": "섹션 1"}},
     {{"type": "paragraph", "content": "내용..."}},
     {{"type": "tip_box", "content": "꿀팁..."}},
-    {{"type": "heading", "level": 3, "content": "섹션 2: 바로 써먹는 활용법"}},
-    {{"type": "paragraph", "content": "아래 프롬프트를 복사해서 AI에게 시켜보세요."}},
-    {{"type": "code_block", "language": "text", "content": "여기에 '한글 자연어 프롬프트' 입력 (코딩 아님!)"}},
+    {{"type": "code_block", "language": "text", "content": "한글 질문 예시"}},
     {{"type": "warning_box", "content": "주의사항..."}},
     {{"type": "paragraph", "content": "결론"}}
   ],
   "summary": "요약",
-  "tags": ["AI", "활용팁", "업무효율"]
+  "tags": ["AI", "활용팁"]
 }}
 
 # Output Format
@@ -204,7 +199,7 @@ def main():
         topic = agent.load_topic()
         result = agent.generate_structured_content(topic['title'])
         agent.save_output(result)
-        print("\n✅ Step 2 완료! (Failover System)")
+        print("\n✅ Step 2 완료! (Failover V2)")
     except Exception as e:
         print(f"\n❌ Step 2 실패: {e}")
         exit(1)
