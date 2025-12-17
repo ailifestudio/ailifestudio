@@ -1,43 +1,26 @@
 #!/usr/bin/env python3
 """
-Step 4: Save to data.json & Markdown (Clean Image Version)
-- 이미지 캡션(설명글)을 화면에서 완전히 제거
-- 한글 설명 -> Alt Text(SEO용)로 숨김
-- 영어 프롬프트 -> HTML 주석(관리자용)으로 숨김
+Step 4: Save to data.json & Markdown (Optimization Version)
+- 최적화: 불필요한 번역 API 호출 제거 (Step 2에서 만든 한글 설명 사용)
+- 스타일: 박스 깨짐 방지 (>)
+- 이미지: 화면엔 이미지만 표시 + 한글(Alt)/영어(주석) 숨김 처리
 """
 
 import json
 import os
 from datetime import datetime
 from pathlib import Path
-import google.generativeai as genai
-import time
 
 class DataSaver:
-    def __init__(self, config_path="config_ai.json"):
+    def __init__(self):
+        """초기화 (API 설정 불필요)"""
         self.output_dir = Path(__file__).parent.parent
         self.data_file = self.output_dir / 'data.json'
         self.contents_dir = self.output_dir / 'contents'
         self.contents_dir.mkdir(exist_ok=True)
-        
-        # 번역 설정
-        self.config = {}
-        if Path(config_path).exists():
-            with open(config_path, 'r', encoding='utf-8') as f:
-                self.config = json.load(f)
-        
-        # API 키 로드
-        self.api_key = os.getenv('GEMINI_API_KEY', self.config.get('gemini_api_key', ''))
-        
-        if self.api_key:
-            genai.configure(api_key=self.api_key)
-            self.model = genai.GenerativeModel("gemini-1.5-flash")
-            print("   ✅ 번역용 Gemini API 연결 성공")
-        else:
-            print("   ⚠️ GEMINI_API_KEY 없음: 번역 기능 비활성화")
-            self.model = None
 
     def load_validated_content(self, input_path="automation/intermediate_outputs/step3_validated_content.json"):
+        """Step 3 결과 로드"""
         try:
             with open(input_path, 'r', encoding='utf-8') as f:
                 return json.load(f)
@@ -45,30 +28,12 @@ class DataSaver:
             print("❌ Step 3 결과 파일이 없습니다.")
             return None
 
-    def translate_descriptions(self, descriptions):
-        """이미지 설명 한글 번역"""
-        if not self.model or not descriptions:
-            return descriptions
-
-        print(f"   🌐 이미지 설명 {len(descriptions)}개 번역 시도...")
-        prompt = "Translate the following image descriptions into natural Korean captions. Return ONLY the translated lines.\n\n"
-        for desc in descriptions:
-            prompt += f"- {desc}\n"
-            
-        try:
-            response = self.model.generate_content(prompt)
-            lines = [l.strip().replace('- ', '') for l in response.text.strip().split('\n') if l.strip()]
-            if len(lines) == len(descriptions):
-                return lines
-            return descriptions
-        except:
-            return descriptions
-
     def create_markdown_content(self, data):
-        """Markdown 변환 (이미지 캡션 제거됨)"""
+        """Markdown 변환 로직 (번역 과정 없이 즉시 생성)"""
         current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         today_date = datetime.now().strftime('%Y-%m-%d')
         
+        # Front Matter
         md = "---\n"
         md += f"title: \"{data['title']}\"\n"
         md += f"date: {current_time}\n"
@@ -78,49 +43,47 @@ class DataSaver:
         md += "---\n\n"
 
         sections = data.get('sections', [])
-        
-        # 이미지 번역 (Alt Text용)
-        img_secs = [s for s in sections if s['type'] == 'image']
-        eng_descs = [s['description'] for s in img_secs]
-        kor_descs = self.translate_descriptions(eng_descs)
-        desc_map = {eng: kor for eng, kor in zip(eng_descs, kor_descs)}
 
         for s in sections:
             sType = s['type']
             content = s.get('content', '')
 
+            # [기본] 문단, 헤딩, 리스트
             if sType in ['paragraph', 'text']:
                 md += f"{content}\n\n"
-            
             elif sType == 'heading':
                 md += f"{'#' * s['level']} {content}\n\n"
-
             elif sType == 'list':
                 for item in s['items']:
                     md += f"- {item}\n"
                 md += "\n"
             
+            # [코드 블록] 영어/한글 상관없이 있는 그대로 출력
             elif sType in ['code_block', 'code']:
-                lang = s.get('language', '')
+                lang = s.get('language', 'text')
                 md += f"```{lang}\n{content}\n```\n\n"
 
+            # [스타일 수정] 팁 박스 (인용구 스타일)
             elif sType == 'tip_box':
                 md += f"> 💡 **TIP:** {content}\n\n"
 
+            # [스타일 수정] 경고 박스 (인용구 스타일)
             elif sType == 'warning_box':
                 md += f"> ⚠️ **주의:** {content}\n\n"
 
+            # [핵심] 이미지 처리 (API 호출 없이 바로 사용)
             elif sType == 'image':
                 url = f"/{s['url']}"
-                eng = s['description'].replace('"', "'")
-                kor = desc_map.get(s['description'], eng)
+                eng = s.get('description', '')          # 영어 (Flux용)
+                kor = s.get('description_ko', eng)      # 한글 (관리자용 - Step 2에서 가져옴)
                 
-                # [수정됨] 캡션(글자) 없는 순수 이미지 태그
-                # - Alt Text: 한글 설명 (검색엔진용)
-                # - HTML 주석: 영어 프롬프트 (관리자 참고용, 화면엔 안보임)
+                # 1. 화면 표시: 이미지만 깔끔하게 (Alt 태그는 SEO를 위해 한글 사용)
                 md += f"![{kor}]({url})\n"
+                
+                # 2. 숨김 처리 (관리자용 주석): 영어와 한글 모두 기록
                 md += f"\n\n"
         
+        # 요약 추가
         if 'summary' in data:
             md += "---\n## 📝 요약\n"
             md += f"{data['summary']}\n"
@@ -138,19 +101,20 @@ class DataSaver:
         else:
             articles = []
 
+        # 중복 방지 및 최신 글 추가
         articles = [a for a in articles if a['title'] != new_article['title']]
         articles.insert(0, new_article)
         articles = articles[:50]
 
         with open(self.data_file, 'w', encoding='utf-8') as f:
             json.dump({"articles": articles}, f, ensure_ascii=False, indent=2)
-        print(f"✅ data.json 업데이트 완료")
+        print(f"✅ data.json 업데이트 완료 ({len(articles)}개 글)")
 
     def run(self):
         data = self.load_validated_content()
         if not data: return
 
-        print("\n💾 Step 4: Markdown 변환 (Clean Image Version)")
+        print("\n💾 Step 4: Markdown 변환 (Optimization Mode)")
         md_content, date_str = self.create_markdown_content(data)
         
         timestamp = datetime.now().strftime('%H%M%S')
@@ -179,5 +143,4 @@ class DataSaver:
         self.update_data_json(article_entry)
 
 if __name__ == "__main__":
-    saver = DataSaver()
-    saver.run()
+    DataSaver().run()
