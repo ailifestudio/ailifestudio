@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Step 2: Writer & Art Director Agent (Failover System V2)
-- 전략: 2.0 Flash (메인) -> 실패 시 2.0 Flash Lite (구원투수)
-- 로그에서 확인된 '실제 존재하는 모델명'만 사용
+Step 2: Writer & Art Director Agent (Final Strategy)
+- 전략: gemini-1.5-flash-8b (최신 초경량 모델, 쿼터 회피용)
+- 설정: 코딩 금지 + 이미지 묘사 이중화
 """
 
 import google.generativeai as genai
@@ -30,12 +30,8 @@ class WriterAgent:
         
         genai.configure(api_key=self.api_keys[0])
         
-        # [1순위] 메인 모델 (2.0 Flash)
-        self.primary_model = "gemini-2.0-flash"
-        # [2순위] 백업 모델 (2.0 Flash Lite - 쿼터 널널함)
-        self.backup_model = "gemini-2.0-flash-lite-preview-02-05"
-        
-        self.current_model_name = self.primary_model
+        # [최후의 수단] 1.5 Flash 8B (초경량 모델)
+        self.current_model_name = "gemini-1.5-flash-8b"
         self.model = genai.GenerativeModel(self.current_model_name)
     
     def _load_api_keys(self) -> List[str]:
@@ -51,7 +47,7 @@ class WriterAgent:
     
     def _generate_with_retry(self, prompt: str, max_key_rotations: int = None) -> str:
         if max_key_rotations is None:
-            max_key_rotations = len(self.api_keys) * 3 # 모델 2개 교체 + 키 로테이션 고려
+            max_key_rotations = len(self.api_keys)
         
         for attempt in range(max_key_rotations):
             try:
@@ -60,38 +56,18 @@ class WriterAgent:
                 return response.text
             except Exception as e:
                 error_str = str(e)
+                print(f"   ⚠️ 오류: {error_str.split('message')[0][:80]}...")
                 
-                # 429(쿼터) or 404(모델없음) or 500(서버오류) 발생 시
-                if any(x in error_str.lower() for x in ['429', 'quota', '404', 'not found', '500', '503']):
-                     print(f"   ⚠️ 오류: {error_str.split('message')[0][:80]}...")
-                     
-                     # 1. 현재 메인 모델이었다면 -> 백업(Lite) 모델로 교체
-                     if self.current_model_name == self.primary_model:
-                         print(f"   🔄 전환: Flash(쿼터부족/에러) -> Lite(백업)으로 변경")
-                         self.current_model_name = self.backup_model
-                         self.model = genai.GenerativeModel(self.current_model_name)
-                         time.sleep(2)
-                         continue
-                     
-                     # 2. 이미 백업 모델이었거나 둘 다 실패하면 -> 다음 키로 교체
-                     else:
-                        if self.current_key_index < len(self.api_keys) - 1:
-                            self.current_key_index += 1
-                            print(f"   🔑 키 변경: Key #{self.current_key_index + 1}로 이동 (모델 초기화)")
-                            genai.configure(api_key=self.api_keys[self.current_key_index])
-                            # 새 키에서는 다시 메인 모델부터 시도
-                            self.current_model_name = self.primary_model
-                            self.model = genai.GenerativeModel(self.current_model_name)
-                            time.sleep(2)
-                            continue
-                        else:
-                            print("❌ 모든 키와 모델(Main/Backup)을 다 썼으나 실패했습니다.")
-                            raise e
-                
-                print(f"⚠️ 기타 오류: {e} (5초 대기)")
-                time.sleep(5)
-                
-                if attempt == max_key_rotations - 1:
+                # 키 로테이션
+                if self.current_key_index < len(self.api_keys) - 1:
+                    self.current_key_index += 1
+                    print(f"   🔑 키 변경: Key #{self.current_key_index + 1}로 이동")
+                    genai.configure(api_key=self.api_keys[self.current_key_index])
+                    self.model = genai.GenerativeModel(self.current_model_name)
+                    time.sleep(2)
+                    continue
+                else:
+                    print("❌ 모든 키가 소진되었습니다.")
                     raise e
     
     def load_topic(self, input_path: str = "automation/intermediate_outputs/step1_topic.json") -> dict:
@@ -100,8 +76,8 @@ class WriterAgent:
     
     def generate_structured_content(self, topic: str) -> dict:
         print("\n" + "="*60)
-        print("📝 Step 2: Writer Agent (Failover V2)")
-        print("   ⚙️  전략: 2.0 Flash -> 2.0 Flash Lite (쿼터 회피)")
+        print("📝 Step 2: Writer Agent (1.5 Flash 8B Strategy)")
+        print("   ⚙️  모델: gemini-1.5-flash-8b")
         print("   ⚙️  설정: 코딩 금지 + 이미지 묘사 이중화")
         print("="*60)
         
@@ -125,14 +101,12 @@ class WriterAgent:
 
 # ★ 'code_block' 작성 규칙 (엄격 준수):
 `code_block`에는 프로그래밍 코드 대신, **독자가 AI 채팅창에 복사해서 붙여넣을 수 있는 '한글 지시문(Prompt)'**을 넣으세요.
-- ❌ Bad (작성 금지): `import requests`, `print("Hello")`
-- ⭕ Good (작성 권장): "신규 입사자를 위한 온보딩 매뉴얼 목차를 짜줘."
+- ❌ Bad: `import requests`
+- ⭕ Good: "2024년 트렌드를 요약해줘."
 
-# ★ [매우 중요] Image Art Directing Rules (Flux Model Optimized)
-이미지 퀄리티를 높이기 위해 `description`을 **최대한 길고, 구체적이고, 묘사적으로(Descriptive)** 작성하세요.
-
+# ★ Image Art Directing Rules (Flux Model Optimized)
 1. **`description` (영어 - 생성용)**:
-   - 50단어 이상의 영어 문장. 조명, 구도, 인물 묘사, 8k, photorealistic 키워드 포함.
+   - 50단어 이상의 구체적이고 긴 영어 문장. 조명, 구도, 인물, 8k 등 포함.
 2. **`description_ko` (한글 - 관리용)**:
    - 위 내용을 요약한 한글 설명.
 
@@ -144,14 +118,14 @@ class WriterAgent:
     {{
       "type": "image_placeholder", 
       "id": "img_1", 
-      "description": "Very long and detailed English description...", 
-      "description_ko": "관리자 참고용 한글 설명...",
+      "description": "Long English description...", 
+      "description_ko": "한글 설명...",
       "position": "after_intro"
     }},
     {{"type": "heading", "level": 3, "content": "섹션 1"}},
     {{"type": "paragraph", "content": "내용..."}},
     {{"type": "tip_box", "content": "꿀팁..."}},
-    {{"type": "code_block", "language": "text", "content": "한글 질문 예시"}},
+    {{"type": "code_block", "language": "text", "content": "한글 예시"}},
     {{"type": "warning_box", "content": "주의사항..."}},
     {{"type": "paragraph", "content": "결론"}}
   ],
@@ -199,7 +173,7 @@ def main():
         topic = agent.load_topic()
         result = agent.generate_structured_content(topic['title'])
         agent.save_output(result)
-        print("\n✅ Step 2 완료! (Failover V2)")
+        print("\n✅ Step 2 완료! (1.5 Flash 8B)")
     except Exception as e:
         print(f"\n❌ Step 2 실패: {e}")
         exit(1)
