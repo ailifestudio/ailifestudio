@@ -7,7 +7,7 @@ on:
     inputs:
       manual_topic:
         description: '제목/주제를 입력하세요 (비워두면 AI가 자동 선정)'
-        required: false  # [중요] false로 변경해야 빈칸 실행 가능
+        required: false
         type: string
       manual_content:
         description: '본문 내용 (비워두면 AI 창작, 입력하면 AI가 정리+이미지 추가)'
@@ -39,29 +39,26 @@ jobs:
         cd automation
         pip install -r requirements.txt
         
-    # [Step 1] 주제 설정 (수동 입력 없으면 자동 선정)
+    # [Step 1] 주제 설정
     - name: 🚀 Step 1 - 주제 선정
       env:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         MANUAL_TOPIC: ${{ github.event.inputs.manual_topic }}
       run: |
         mkdir -p automation/intermediate_outputs
-        # 제목 입력이 없으면(-z) 자동 모드 실행
         if [[ -z "$MANUAL_TOPIC" ]]; then
-           echo "🤖 주제 자동 선정 모드 (입력값 없음)"
+           echo "🤖 주제 자동 선정 모드"
            python automation/step1_topic_agent.py
         else
            echo "📝 수동 주제 모드: $MANUAL_TOPIC"
-           # 파이썬으로 topic.json 강제 생성
            python3 -c "import json; import os; topic = os.environ['MANUAL_TOPIC']; data = {'title': topic, 'search_keywords': [topic]}; print(json.dumps(data, ensure_ascii=False))" > automation/intermediate_outputs/step1_topic.json
         fi
 
-    # [Step 2] 글 작성 (에디터 모드 vs 창작 모드)
-    - name: 📝 Step 2 - 글 작성 (Editor Mode)
+    # [Step 2] 글 작성
+    - name: 📝 Step 2 - 글 작성
       env:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         GEMINI_API_KEYS: ${{ secrets.GEMINI_API_KEYS }}
-        # 본문 내용이 있으면 환경변수로 전달
         MANUAL_CONTENT: ${{ github.event.inputs.manual_content }}
       run: |
         echo "📝 Step 2 실행..."
@@ -85,6 +82,7 @@ jobs:
     - name: 📊 data.json 이동
       run: cp automation/data.json data.json || exit 1
         
+    # [PR 생성] 여기가 수정된 부분입니다!
     - name: 📋 검수용 PR 생성
       env:
         GH_TOKEN: ${{ secrets.MY_PAT }} 
@@ -102,7 +100,14 @@ jobs:
             TOPIC="AI 포스팅"
           fi
           git checkout -b $BRANCH_NAME
-          git commit -m "📝 [AI 작성] $TOPIC"
+          git commit -m "📝 [검수 요청] $TOPIC"
           git push origin $BRANCH_NAME
-          gh pr create --title "📝 [AI 작성] $TOPIC" --body "AI가 작성한 새 글입니다." --base main --head $BRANCH_NAME
+          
+          # 라벨 추가(--label) 및 제목 복구([검수 요청])
+          gh pr create \
+            --title "🤖 [검수 요청] $TOPIC" \
+            --body "AI가 작성한 새 글입니다. 내용을 검토하고 Merge 해주세요." \
+            --base main \
+            --head $BRANCH_NAME \
+            --label "ai-generated,needs-review"
         fi
