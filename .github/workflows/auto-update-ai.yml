@@ -6,11 +6,11 @@ on:
   workflow_dispatch:
     inputs:
       manual_topic:
-        description: '제목/주제를 입력하세요 (필수)'
-        required: true
+        description: '제목/주제를 입력하세요 (비워두면 AI가 자동 선정)'
+        required: false  # [중요] false로 변경해야 빈칸 실행 가능
         type: string
       manual_content:
-        description: '본문 내용을 입력하세요 (비워두면 AI가 창작, 채우면 AI가 정리+이미지추가)'
+        description: '본문 내용 (비워두면 AI 창작, 입력하면 AI가 정리+이미지 추가)'
         required: false
         type: string
 
@@ -39,35 +39,35 @@ jobs:
         cd automation
         pip install -r requirements.txt
         
-    # [Step 1] 주제 설정 (제목은 필수)
+    # [Step 1] 주제 설정 (수동 입력 없으면 자동 선정)
     - name: 🚀 Step 1 - 주제 선정
       env:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         MANUAL_TOPIC: ${{ github.event.inputs.manual_topic }}
       run: |
         mkdir -p automation/intermediate_outputs
-        # 제목이 없으면 자동, 있으면 수동
+        # 제목 입력이 없으면(-z) 자동 모드 실행
         if [[ -z "$MANUAL_TOPIC" ]]; then
-           echo "🤖 주제 자동 선정 모드"
+           echo "🤖 주제 자동 선정 모드 (입력값 없음)"
            python automation/step1_topic_agent.py
         else
            echo "📝 수동 주제 모드: $MANUAL_TOPIC"
-           # 파이썬 원라이너로 topic.json 생성
+           # 파이썬으로 topic.json 강제 생성
            python3 -c "import json; import os; topic = os.environ['MANUAL_TOPIC']; data = {'title': topic, 'search_keywords': [topic]}; print(json.dumps(data, ensure_ascii=False))" > automation/intermediate_outputs/step1_topic.json
         fi
 
-    # [Step 2] 글 작성 (창작 vs 정리)
+    # [Step 2] 글 작성 (에디터 모드 vs 창작 모드)
     - name: 📝 Step 2 - 글 작성 (Editor Mode)
       env:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         GEMINI_API_KEYS: ${{ secrets.GEMINI_API_KEYS }}
-        # 입력된 본문 내용을 환경변수로 전달
+        # 본문 내용이 있으면 환경변수로 전달
         MANUAL_CONTENT: ${{ github.event.inputs.manual_content }}
       run: |
         echo "📝 Step 2 실행..."
         python automation/step2_writer_agent.py
 
-    # [Step 3, 4] 이후 단계는 동일
+    # [Step 3] 이미지 생성
     - name: 🎨 Step 3 - 이미지 생성 및 검수
       env:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -75,6 +75,7 @@ jobs:
         HUGGINGFACE_API_TOKEN: ${{ secrets.HUGGINGFACE_API_TOKEN }} 
       run: python automation/step3_image_audit_agent.py
     
+    # [Step 4] 저장
     - name: 💾 Step 4 - data.json 저장
       run: python automation/step4_save_to_data_json.py
         
