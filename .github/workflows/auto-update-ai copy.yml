@@ -1,0 +1,201 @@
+name: Auto Update Blog with AI
+
+on:
+  schedule:
+    - cron: '0 0,6,12 * * *' # 매일 09:00, 15:00, 21:00 KST
+  workflow_dispatch:
+    inputs:
+      manual_topic:
+        description: '주제를 입력하세요 (비워두면 AI가 자동 선정)'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-blog:
+    runs-on: ubuntu-latest
+    env:
+      PYTHONPATH: ${{ github.workspace }} # 파이썬 경로 명시
+
+    steps:
+    - name: 📥 체크아웃
+      uses: actions/checkout@v4
+      
+    - name: 🐍 Python 설정
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+        
+    - name: 📦 의존성 설치
+      run: |
+        cd automation
+        pip install -r requirements.txt
+        
+    # ----------------------------------------------------------------
+    # [Step 1] 주제 선정 (스마트 하이브리드 모드)
+    # ----------------------------------------------------------------
+    - name: 🚀 Step 1 - 주제 선정 (자동 vs 수동)
+      env:
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        GEMINI_API_KEYS: ${{ secrets.GEMINI_API_KEYS }}
+        MANUAL_TOPIC: ${{ github.event.inputs.manual_topic }}
+      run: |
+        mkdir -p automation/intermediate_outputs
+        
+        # 1. 입력값이 없거나 "자동"이면 -> AI가 알아서 선정 (기존 방식)
+        if [[ -z "$MANUAL_TOPIC" || "$MANUAL_TOPIC" == "자동" ]]; then
+          echo "🤖 [자동 모드] AI가 블루오션 키워드를 발굴합니다..."
+          python automation/step1_topic_agent.py
+          
+        # 2. 주제가 입력되면 -> 그 주제로 강제 설정 (수동 방식)
+        else
+          echo "📝 [수동 모드] 지정된 주제로 글을 작성합니다: $MANUAL_TOPIC"
+          # 파이썬 원라이너로 topic.json 파일 즉시 생성
+          python3 -c "import json; import os; topic = os.environ['MANUAL_TOPIC']; data = {'title': topic, 'search_keywords': [topic]}; print(json.dumps(data, ensure_ascii=False))" > automation/intermediate_outputs/step1_topic.json
+        fi
+        
+        # 결과 확인
+        echo "✅ 최종 확정 주제:"
+        cat automation/intermediate_outputs/step1_topic.json
+    
+    # ----------------------------------------------------------------
+    # [Step 2 ~ 4] 콘텐츠 생성 파이프라인
+    # (수동 실행 시에도 무조건 돌도록 if 조건을 제거했습니다)
+    # ----------------------------------------------------------------
+    - name: 📝 Step 2 - 글 작성
+      env:
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        GEMINI_API_KEYS: ${{ secrets.GEMINI_API_KEYS }}
+      run: |
+        echo "📝 Step 2: 구조화된 콘텐츠 작성 중..."
+        python automation/step2_writer_agent.py
+    
+    - name: 🎨 Step 3 - 이미지 생성 및 검수
+      env:
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        GEMINI_API_KEYS: ${{ secrets.GEMINI_API_KEYS }}
+        HUGGINGFACE_API_TOKEN: ${{ secrets.HUGGINGFACE_API_TOKEN }} 
+      run: |
+        echo "🎨 Step 3: 이미지 생성 및 Gemini Vision 검수 중..."
+        python automation/step3_image_audit_agent.py
+    
+    - name: 💾 Step 4 - data.json 저장
+      env:
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}  # (번역 필요시 사용, 현재는 최적화됨)
+      run: |
+        echo "💾 Step 4: data.json 및 Markdown 파일 생성 중..."
+        python automation/step4_save_to_data_json.py
+        
+    # ----------------------------------------------------------------
+    # [빌드 및 배포]
+    # ----------------------------------------------------------------
+    - name: 🔨 블로그 빌드 (RSS/HTML)
+      run: |
+        echo "🔨 build_blog.py 실행 중..."
+        python automation/build_blog.py
+        echo "✅ 블로그 빌드 완료"
+    
+    - name: 📊 data.json 이동
+      run: |
+        if [ -f automation/data.json ]; then
+          cp automation/data.json data.json
+          echo "✅ data.json 업데이트 완료"
+        else
+          echo "❌ data.json 생성 실패"
+          exit 1
+        fi
+        
+    - name: 📋 검수용 PR 생성
+      env:
+        GH_TOKEN: ${{ secrets.MY_PAT }} 
+        TZ: 'Asia/Seoul'
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        
+        # [안전장치] 파일이 존재할 때만 add
+        git add data.json || true
+        git add contents/ || true
+        git add automation/generated_images/ || true
+        git add feed/ || true
+        
+        if ! git diff --staged --quiet; then
+          # ---------------------------------------------------------
+          # [관리자 알림] 생성된 파일 목록 출력
+          # ---------------------------------------------------------
+          echo "========================================================"
+          echo "📂 [관리자 확인용] 생성 및 수정된 파일 목록"
+          echo "========================================================"
+          git diff --staged --name-only | sed 's/^/👉 /'
+          echo "========================================================"
+          
+          CURRENT_DATE=$(date +'%Y%m%d-%H%M%S')
+          BRANCH_NAME="ai-review-$CURRENT_DATE"
+          
+          if [ -f automation/intermediate_outputs/step1_topic.json ]; then
+            TOPIC=$(cat automation/intermediate_outputs/step1_topic.json | jq -r '.title')
+          else
+            TOPIC="AI 자동 생성 포스트 ($CURRENT_DATE)"
+          fi
+          
+          git checkout -b $BRANCH_NAME
+          git commit -m "🤖 [검수 요청] $TOPIC"
+          git push origin $BRANCH_NAME
+          
+          # ---------------------------------------------------------
+          # PR 본문 작성
+          # ---------------------------------------------------------
+          PR_TITLE="🤖 [검수 요청] $TOPIC"
+          CURRENT_TIME=$(date +'%Y-%m-%d %H:%M:%S')
+          
+          printf "## 📝 AI가 새로운 포스팅을 작성했습니다\n\n" > /tmp/pr_body.md
+          printf "**주제:** %s\n" "$TOPIC" >> /tmp/pr_body.md
+          printf "**작성 시각:** %s (KST)\n\n" "$CURRENT_TIME" >> /tmp/pr_body.md
+          
+          printf "%s\n" "---" >> /tmp/pr_body.md
+          
+          printf "### ✅ 검수 체크리스트\n" >> /tmp/pr_body.md
+          printf "%s\n" "- [ ] **이미지:** \`automation/generated_images/\` 폴더 확인" >> /tmp/pr_body.md
+          printf "%s\n" "- [ ] **내용:** \`contents/\` 폴더의 Markdown 파일 확인" >> /tmp/pr_body.md
+          printf "%s\n" "- [ ] **메타데이터:** \`data.json\` 업데이트 확인" >> /tmp/pr_body.md
+          printf "\n" >> /tmp/pr_body.md
+          
+          printf "### 📌 관리자 행동 가이드\n" >> /tmp/pr_body.md
+          printf "1. **승인:** [Merge pull request] 클릭 → 배포\n" >> /tmp/pr_body.md
+          printf "2. **수정:** [Files changed] 탭 → Edit file → 수정\n" >> /tmp/pr_body.md
+          printf "3. **반려:** [Close pull request] 클릭 → 폐기\n\n" >> /tmp/pr_body.md
+          
+          printf "%s\n" "---" >> /tmp/pr_body.md
+          printf "🤖 *This content was generated by Gemini AI Pipeline.*\n" >> /tmp/pr_body.md
+          
+          # PR 생성
+          gh pr create \
+            --title "$PR_TITLE" \
+            --body-file /tmp/pr_body.md \
+            --base main \
+            --head $BRANCH_NAME \
+            --label "ai-generated" \
+            --label "needs-review"
+          
+          echo "✅ PR 생성 완료: $BRANCH_NAME"
+        else
+          echo "ℹ️ 변경사항 없음"
+        fi
+
+    # [디버깅] 실패 시 로그 출력
+    - name: 🔍 (실패 시) 디버깅 파일 목록 확인
+      if: failure()
+      run: |
+        echo "========================================================"
+        echo "🐞 [디버깅] 중간 산출물 파일 경로 안내"
+        echo "========================================================"
+        if [ -d "automation/intermediate_outputs" ]; then
+          ls -R automation/intermediate_outputs/ | sed 's/^/📄 /'
+        else
+          echo "⚠️ 중간 산출물 폴더가 존재하지 않습니다."
+        fi
+        echo "========================================================"

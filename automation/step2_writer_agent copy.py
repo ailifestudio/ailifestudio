@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """
-Step 2: Writer & Art Director Agent (Editor Mode + Scroll Fix)
-- 기능 1: 주제만 있으면 -> AI 창작 (Creative Writing)
-- 기능 2: 본문도 있으면 -> AI 정리 & 이미지 추가 (Editing)
-- 핵심 수정: '가로 스크롤' 원인인 Code Block(```) 사용 금지 -> 인용구(>) 강제
+Step 2: Writer & Art Director Agent (Volume Booster V3)
+- 모델: gemini-2.5-flash
+- 수정 1: "각 섹션 최소 500자 이상 작성" 강제 (내용 증발 해결)
+- 수정 2: "description_ko" 필드 누락 방지 (이미지 설명 한글화)
+- 수정 3: 이미지 생성 시 '인물/손' 클로즈업 자제 요청 (기괴함 방지)
 """
 
 import google.generativeai as genai
@@ -43,6 +44,7 @@ class WriterAgent:
     
     def _generate_with_retry(self, prompt: str, max_key_rotations: int = None) -> str:
         if max_key_rotations is None: max_key_rotations = len(self.api_keys)
+        
         for attempt in range(max_key_rotations):
             try:
                 print(f"   🤖 시도: {self.model_name} (Key #{self.current_key_index + 1})")
@@ -57,6 +59,7 @@ class WriterAgent:
                 if '429' in error_str or 'quota' in error_str.lower():
                     if self.current_key_index < len(self.api_keys) - 1:
                         self.current_key_index += 1
+                        print(f"   🔄 쿼터 초과! Key #{self.current_key_index + 1}로 교체")
                         genai.configure(api_key=self.api_keys[self.current_key_index])
                         self.model = genai.GenerativeModel(self.model_name)
                         time.sleep(2)
@@ -69,105 +72,63 @@ class WriterAgent:
         with open(input_path, 'r', encoding='utf-8') as f: return json.load(f)
     
     def generate_structured_content(self, topic: str) -> dict:
-        # 1. 수동 본문 확인 (에디터 모드 여부 결정)
-        manual_content = os.getenv('MANUAL_CONTENT', '').strip()
+        print("\n" + "="*60)
+        print("📝 Step 2: Writer Agent (Volume Booster V3)")
+        print("   ⚙️  목표: 본문 내용 길게 쓰기 + 이미지 한글 설명 필수")
+        print("="*60)
         
-        # [공통 규칙] 스크롤 방지를 위한 강력한 지시
-        common_rules = """
-        ### 🚨 SCROLL FIX RULES (Very Important):
-        1. **NEVER use Code Blocks (```).** They cause scroll issues on mobile.
-        2. Instead of `code_block`, use **`tip_box`** or just `paragraph` with ">" (blockquote) style for prompts.
-        3. Even for "Prompt Examples", do NOT use the `code_block` type in JSON. Use `tip_box` instead.
-        """
-        
-        if manual_content:
-            print("\n" + "="*60)
-            print("📝 Step 2: Editor Mode (수동 본문 정리)")
-            print("="*60)
-            
-            writer_prompt = f"""
-You are a professional Editor.
-**Topic:** {topic}
-**User's Draft:**
-{manual_content}
-
-**Task:**
-1. Organize the draft into a structured blog post (JSON).
-2. **Expand content:** Make it longer and richer (min 300 chars/paragraph).
-3. **Insert Images:** Add `image_placeholder` where appropriate.
-
-{common_rules}
-
-**JSON Schema:**
-{{
-  "title": "{topic}",
-  "sections": [
-    {{ "type": "heading", "level": 2, "content": "Intro" }},
-    {{ "type": "paragraph", "content": "..." }},
-    {{ 
-      "type": "image_placeholder", 
-      "id": "img_1", 
-      "description": "Cinematic shot, wide angle, 8k, --no ugly hands", 
-      "description_ko": "한글 설명 (필수)",
-      "position": "after_intro" 
-    }},
-    {{ "type": "heading", "level": 3, "content": "..." }},
-    {{ "type": "paragraph", "content": "..." }},
-    {{ "type": "tip_box", "content": "Korean Prompt Example (Do not use code_block)" }}
-  ],
-  "summary": "Summary",
-  "tags": ["Tag1"]
-}}
-"""
-        else:
-            print("\n" + "="*60)
-            print("📝 Step 2: Creator Mode (AI 창작)")
-            print("="*60)
-            
-            writer_prompt = f"""
+        writer_prompt = f"""
 You are a professional IT Tech Editor.
 **Topic:** {topic}
-**Task:** Write a high-quality blog post in **JSON format**.
 
-**Rules:**
-1. **Length:** Minimum 300~500 characters per paragraph (Korean).
-2. **Content:** Rich details, Why/How/Examples.
-3. **Images:** 50+ words description, Korean translation required.
+Your task is to write a high-quality blog post in **JSON format**.
 
-{common_rules}
+### 🚨 CRITICAL RULES (Must Follow):
+1.  **LENGTH (Very Important):**
+    - Do NOT summarize. Write in full detail.
+    - Each `paragraph` content MUST be at least **300~500 characters** (Korean).
+    - Explain "Why", "How", "Example" in every section.
 
-**JSON Schema:**
+2.  **IMAGE DESCRIPTION:**
+    - `description` (English): Cinematic lighting, wide shot, 8k resolution. **Avoid close-ups of hands or faces to prevent AI artifacts.**
+    - `description_ko` (Korean): **REQUIRED.** Summarize the image description in Korean. (e.g., "사무실에서 일하는 남성")
+
+3.  **NO CODE:** Use "Korean Prompts" instead of Python code.
+
+### JSON Schema:
 {{
-  "title": "{topic}",
+  "title": "Title (Korean)",
   "sections": [
-    {{ "type": "heading", "level": 2, "content": "Intro" }},
-    {{ "type": "paragraph", "content": "Write very long intro..." }},
+    {{ "type": "heading", "level": 2, "content": "Intro Title" }},
+    {{ "type": "paragraph", "content": "Write a very long introduction (minimum 5 sentences)..." }},
     {{ 
       "type": "image_placeholder", 
       "id": "img_1", 
-      "description": "Cinematic shot, wide angle, 8k, --no ugly hands", 
-      "description_ko": "한글 설명 (필수)",
+      "description": "Cinematic shot of [Subject], wide angle, soft lighting, 8k, photorealistic --no ugly hands", 
+      "description_ko": "이미지에 대한 한글 설명 (필수 입력)",
       "position": "after_intro" 
     }},
-    {{ "type": "heading", "level": 3, "content": "Section 1" }},
-    {{ "type": "paragraph", "content": "Write detailed content..." }},
-    {{ "type": "tip_box", "content": "Useful tip or Prompt Example" }},
-    {{ "type": "warning_box", "content": "Warning" }}
+    {{ "type": "heading", "level": 3, "content": "Section 1 Title" }},
+    {{ "type": "paragraph", "content": "Write detailed content (minimum 500 characters)..." }},
+    {{ "type": "tip_box", "content": "Useful tip..." }},
+    {{ "type": "code_block", "language": "text", "content": "Korean Prompt Example" }},
+    {{ "type": "warning_box", "content": "Warning note..." }},
+    {{ "type": "paragraph", "content": "Conclusion..." }}
   ],
-  "summary": "Summary",
-  "tags": ["Tag1"]
+  "summary": "Short summary",
+  "tags": ["Tag1", "Tag2"]
 }}
 """
-
         try:
-            print("\n✍️ 콘텐츠 생성/정리 중...")
+            print("\n✍️ 콘텐츠 생성 중 (장문 모드)...")
             response_text = self._generate_with_retry(writer_prompt)
-            clean_text = response_text.strip()
-            if clean_text.startswith('```json'): clean_text = clean_text[7:]
-            if clean_text.startswith('```'): clean_text = clean_text[3:]
-            if clean_text.endswith('```'): clean_text = clean_text[:-3]
-            content_data = json.loads(clean_text.strip())
+            content_data = json.loads(response_text)
             
+            # 결과 검증
+            if len(content_data.get('sections', [])) > 0:
+                first_p = next((s['content'] for s in content_data['sections'] if s['type'] == 'paragraph'), "")
+                print(f"   ℹ️ 첫 문단 길이: {len(first_p)}자 (목표: 300자 이상)")
+
             return {
                 "title": topic,
                 "sections": content_data.get('sections', []),
@@ -188,10 +149,7 @@ You are a professional IT Tech Editor.
 
 def main():
     try:
-        agent = WriterAgent()
-        topic = agent.load_topic()
-        result = agent.generate_structured_content(topic['title'])
-        agent.save_output(result)
+        WriterAgent().save_output(WriterAgent().generate_structured_content(WriterAgent().load_topic()['title']))
         print("\n✅ Step 2 완료!")
     except Exception as e:
         print(f"\n❌ Step 2 실패: {e}")
