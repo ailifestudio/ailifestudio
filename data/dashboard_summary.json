@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2025-12-19 00:18",
+  "updatedAt": "2025-12-19 00:33",
   "total": 7,
   "articles": [
     {
@@ -8,7 +8,7 @@
       "time": "어제",
       "summary": "",
       "link": "/article.html?slug=2025-12-18-082603-ai-article",
-      "image": "",
+      "image": "/automation/generated_images/img_1_a0865e0f.png",
       "category": "AI/테크",
       "type": "markdown",
       "slug": "2025-12-18-082603-ai-article",
